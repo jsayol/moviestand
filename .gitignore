@@ -26,3 +26,10 @@ node_modules
 
 # Users Environment Variables
 .lock-wscript
+
+# Bower components
+app/bower_components
+
+# Temporary ignores, will remove these eventually
+test
+karma.conf.js
