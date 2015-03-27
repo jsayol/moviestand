@@ -1,0 +1,56 @@
+@charset "UTF-8";
+
+/*Title Bar*/
+header {
+  -webkit-app-region: drag;
+  -webkit-user-select: none;
+
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 25px;
+  right: 0px;
+  overflow: hidden;
+  padding-right: 6px;
+  background: rgba(23, 24, 27, 1);
+  color: #cdcdcd;
+
+  /*-webkit-border-top-left-radius: 5px;*/
+  /*-webkit-border-top-right-radius: 5px;*/
+  /*-webkit-box-shadow: 0 20px 20px -20px rgba(0,0,0,0.75);*/
+}
+
+
+/*Window Controls*/
+header > ul {
+  line-height: 0;
+  padding-left: 6px;
+}
+
+header > ul.right {
+  float: right;
+  text-align: right;
+}
+
+header > ul.left {
+  float: left;
+  text-align: left;
+}
+
+header > ul > li {
+  display: inline-block;
+  width: 13px;
+  height: 22px;
+  margin: 4px 0 3px 0;
+  color: rgb(129, 128, 122);
+  /*-webkit-transition: -webkit-transform 200ms;*/
+  -webkit-app-region: no-drag;
+}
+
+header > ul > li:hover,
+header > ul > li:focus {
+  /*-webkit-transform: scale(1.22,1.22);*/
+  outline: none;
+  cursor: pointer;
+  color: rgb(79, 126, 171);
+}
