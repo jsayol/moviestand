@@ -30,6 +30,10 @@ node_modules
 # Bower components
 app/bower_components
 
+# App database and settings
+db.json
+conf.json
+
 # Temporary ignores, will remove these eventually
 test
 karma.conf.js

@@ -4,23 +4,29 @@
 
 var moviesServices = angular.module('moviesServices', []);
 
-moviesServices.factory('MoviesLocalDB', [
+
+moviesServices.factory('LowDBFactory', [
   function() {
     var low = require('lowdb');
-    var lowdb = low('db.json');
+    return low;
+  }
+]);
+
+moviesServices.factory('MoviesLocalDB', ['LowDBFactory',
+  function(LowDBFactory) {
+    var lowdb = LowDBFactory('db.json');
+    return lowdb;
 
     // return {
     //   'getDB': function(db) { return lowdb(db); },
     //
     // }
-
-    return lowdb;
   }
 ]);
 
 moviesServices.factory('MoviesView', [
   function() {
-    var view = {mode: 'list'};
+    var view = {mode: 'grid'};
     return view;
   }
 ]);
@@ -74,48 +80,58 @@ moviesServices.factory('MovieDB', ['MoviesLocalDB',
         });
       },
 
+      checkUpdateInfo: function(movie, callback) {
+        if (!MoviesLocalDB('tmdb').find({id: movie.tmdbid})) {
+          console.log('Movie "'+movie.fileName+'" has id('+movie.tmdbid+') but no info. Requesting...')
+          that.updateInfo(movie, function(err, m) {
+            if (err) {
+              console.log('Movie "'+movie.fileName+'" with id('+movie.tmdbid+') error getting info.')
+              console.log(err);
+            }
+            callback();
+          });
+        }
+      },
+
       update: function(callback) {
+        var fs = require('fs');
         var that = this;
+        var to_remove = [];
+
         MoviesLocalDB('movies').forEach(function(movie) {
-          if (movie.tmdbid) {
-            if ((typeof(movie.tmdbid) == 'string') && (movie.tmdbid.substr(0,4) == 'ERR_')) {
-              // nothing to do here
-              console.log('Movie "'+movie.fileName+'" had a previous error('+movie.tmdbid+').')
-            }
-            else if (!MoviesLocalDB('tmdb').find({id: movie.tmdbid})) {
-              console.log('Movie "'+movie.fileName+'" has id('+movie.tmdbid+') but no info. Requesting...')
-              that.updateInfo(movie, function(err, m) {
-                if (err) {
-                  console.log('Movie "'+movie.fileName+'" with id('+movie.tmdbid+') error getting info.')
-                  console.log(err);
+          fs.stat(movie.path, function(err, stats) {
+            if (!err && stats && stats.isFile()) {
+              if (movie.tmdbid) {
+                if ((typeof(movie.tmdbid) == 'string') && (movie.tmdbid.substr(0,4) == 'ERR_')) {
+                  // nothing to do here
+                  console.log('Movie "'+movie.fileName+'" had a previous error('+movie.tmdbid+').')
                 }
-                callback();
-              });
-            }
-          }
-          else {
-            console.log('Movie "'+movie.fileName+'" has no id. Requesting...')
-            that.getID(movie, function(err, m) {
-              if (err) {
-                console.log('Movie "'+movie.fileName+'" error getting id.')
-                console.log(err);
+                else {
+                  that.checkUpdateInfo(movie, callback);
+                }
               }
               else {
-                console.log('Movie "'+m.fileName+'" got id('+m.tmdbid+'). Requesting info...')
-                that.updateInfo(m, function(err2, m2) {
-                  if (err2) {
-                    console.log('Movie "'+m2.fileName+'" with id('+m2.tmdbid+') error getting info.')
-                    console.log(err2);
+                console.log('Movie "'+movie.fileName+'" has no id. Requesting...')
+                that.getID(movie, function(err, m) {
+                  if (err) {
+                    console.log('Movie "'+movie.fileName+'" error getting id.')
+                    console.log(err);
                   }
                   else {
-                    console.log('Movie "'+m2.fileName+'" with id('+m2.tmdbid+') got info.')
+                    console.log('Movie "'+m.fileName+'" got id('+m.tmdbid+').')
+                    that.checkUpdateInfo(m, callback);
                   }
-                  callback();
                 });
               }
-            });
-          }
+            }
+            else {
+              console.log('Movie "'+movie.path+'" no longer exists. Removing from DB.');
+              MoviesLocalDB('movies').remove({path: movie.path});
+              callback();
+            }
+          });
         });
+
       }
     };
   }
@@ -126,7 +142,7 @@ moviesServices.factory('FilesFactory', [
     var fs = require('fs');
     var path = require('path');
 
-    var _FOLDER = '/media/josep/Data/Videos/';
+    var _FOLDER = '/media/josep/Data/Videos/Movies';
     var _VALID_EXT = ['.mp4', '.mkv', '.avi'];
     var _RECURSIVE = true;
 
@@ -178,5 +194,45 @@ moviesServices.factory('FilesFactory', [
         });
       }
     };
+  }
+]);
+
+moviesServices.factory('SettingsFactory', ['LowDBFactory',
+  function(LowDBFactory) {
+    var path = require('path');
+
+    return {
+      conf: LowDBFactory('conf.json'),
+
+      getFolders: function() {
+        return this.conf('folders');
+      },
+
+      addFolder: function(folder, category, recursive) {
+        var f = path.normalize(folder);
+        if (!this.conf('folders').find({'path': f})) {
+          this.conf('folders').push({
+            'path': f,
+            'category': type,
+            'recursive': recursive
+          });
+        }
+      },
+
+      removeFolder: function(folder) {
+        var f = path.normalize(folder);
+        this.conf('folders').remove({'path': f});
+      },
+
+      getCategories: function() {
+        this.conf('folders')
+          .chain()
+          .pluck('category')
+          .uniq()
+          .value();
+      }
+
+    };
+
   }
 ]);

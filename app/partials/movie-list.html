@@ -26,12 +26,10 @@
 
 
             <div class="poster">
-              <a href="#/movie/{{movie.fileName}}">
-                <!-- <img class="poster" ng-if="(dbinfo = tmdb.find({id: movie.tmdbid}))" ng-src="http://image.tmdb.org/t/p/w185{{dbinfo.poster_path}}"> -->
-                <!-- <img ng-if="(dbinfo = tmdb.find({id: movie.tmdbid}))" ng-src="../cache{{dbinfo.poster_path}}"> -->
-                <img ng-if="(dbinfo = tmdb.find({id: movie.tmdbid}))" ng-src="http://image.tmdb.org/t/p/w185{{dbinfo.poster_path}}">
-                <img ng-hide="dbinfo" ng-src="img/poster-placeholder.png">
+              <a ng-if="(dbinfo = tmdb.find({id: movie.tmdbid}))" href="#/movie/{{movie.fileName}}">
+                <img ng-src="http://image.tmdb.org/t/p/w185{{dbinfo.poster_path}}">
               </a>
+              <img ng-hide="dbinfo" ng-src="img/poster-placeholder.png">
             </div>
 
             <div class="info">
