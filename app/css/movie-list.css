@@ -1,0 +1,210 @@
+
+/* Movie list: General */
+
+.movies {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  margin-right: 10px;
+  padding: 10px 0px 10px 10px;
+}
+
+.movies .movie {
+  /*height: 100%;*/
+}
+
+.movies li {
+  /*padding-top: 0.5em;*/
+  height: 100%;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.movies .poster {
+  /*height: 200px;*/
+  float: left;
+}
+
+.movies .poster img {
+  height: 200px;
+  width: 133px;
+  border-radius: 4px;
+}
+
+.movies .info {
+  padding-top: 5px;
+  /*padding-left: 143px;*/
+}
+
+.movies .title {
+  /*font-weight: bold;*/
+  color: rgb(255,255,255);
+}
+
+.movies .year {
+  /*font-weight: bold;*/
+  color: rgb(100,100,100);
+}
+
+.movie .options {
+  display: none;
+  list-style: none;
+  float: right;
+  /*position: relative;*/
+  /*top: 0;*/
+  width: 130px;
+  height: 25px;
+  font-size: 1.4em;
+  margin: 0;
+  padding: 0;
+  text-align: right;
+}
+
+.movie .options li {
+  clear: none;
+  width: 25px;
+  height: 25px;
+}
+
+.movie .options li:hover {
+  cursor: pointer;
+}
+
+.movie .options li.play:hover {
+  color: rgb(0, 184, 92);
+}
+
+.movie .options li.details:hover {
+  color: rgb(0, 153, 204);
+}
+
+.movie .options li.markhide:hover {
+  color: rgb(166, 41, 0);
+}
+
+.movie .options li.markwatched:hover {
+  color: rgb(0, 153, 204);
+}
+
+
+/* Movie list: List view */
+
+.movies.list li.movie-listing {
+  clear: both;
+  width: 100%;
+  height: 200px;
+  background-color: rgb(28, 29, 32);
+}
+
+.movies.list .info {
+  margin-left: 143px;
+
+}
+
+.movies.list li.movie-listing:not(:last-child) {
+  margin-bottom: 20px;
+}
+
+.movies.list .title {
+  float: left;
+  margin-right: 0.8em;
+}
+
+.movies.list .infoblock {
+  font-size: 0.96em;
+  padding-right: 10px;
+}
+
+.movies.list .tagline {
+  font-style: italic;
+  color: rgb(150,150,150);
+}
+
+.movies.list .overview {
+  max-height: 80px;
+  /*max-lines: 4;*/
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.movies.list .movie-listing:hover .options {
+  /*visibility: visible;*/
+  display: inherit;
+}
+
+.movies.list .lastrowtogrid {
+  display: none;
+}
+
+
+/* Movie list: Grid view */
+
+.movies.grid {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-content: space-around;
+}
+
+.movies.grid li.movie-listing {
+  clear: none;
+  width: 133px;
+  height: 260px;
+  margin-right: 15px;
+}
+
+.movies.grid li.movie-listing:empty {
+  height: 0;
+}
+
+.movies.grid .poster {
+  -webkit-filter: drop-shadow(0px 0px 5px rgba(0,0,0,0.75));
+  float: none;
+}
+
+.movies.grid .poster img {
+  -webkit-transition: all linear 0.1s;
+}
+
+.movies.grid .poster:hover img {
+  -webkit-transform: scale(1.06);
+}
+
+.movies.grid .movie-listing {
+  float: left;
+}
+
+.movies.grid .info .infoblock {
+  display: none;
+}
+
+.movies.grid .title {
+  font-size: 0.9em;
+  max-width: 133px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 15px;
+  position: relative;
+}
+
+.movies.grid .year {
+  font-size: 0.8em;
+}
+
+.movie.grid .options {
+  display: none;
+  text-align: right;
+  font-size: 1.2em;
+  margin-top: 25px;
+  background: red;
+  position: absolute;
+}
+
+.movies.grid .movie-listing:hover .options {
+  /*display: inherit;*/
+}

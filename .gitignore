@@ -29,6 +29,7 @@ node_modules
 
 # Bower components
 app/bower_components
+bower_components
 
 # App database and settings
 db.json

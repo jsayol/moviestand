@@ -1,3 +1,8 @@
-<img ng-src="http://image.tmdb.org/t/p/w185{{movieInfo.poster_path}}">
+<div class="backdrop" style="background-image: url(http://image.tmdb.org/t/p/w780{{movieInfo.backdrop_path}})">
 
-<div>{{movieInfo | json}}</div>
+  <div class="content">
+    <img ng-src="http://image.tmdb.org/t/p/w185{{movieInfo.poster_path}}">
+    <div>{{movieInfo | json}}</div>
+  </div>
+
+</div>

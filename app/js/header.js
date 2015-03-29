@@ -1,34 +1,34 @@
-var headerControllers = angular.module('headerControllers', []);
+var headerControllers = angular.module('headerControllers', [])
 
 headerControllers.controller('HeaderCtrl', ['$scope', 'MoviesView',
   function($scope, MoviesView) {
-    var gui = require('nw.gui');
-    var win = gui.Window.get();
+    var gui = require('nw.gui')
+    var win = gui.Window.get()
 
-    $scope.isMaximized = false;
-    $scope.view = MoviesView;
+    $scope.isMaximized = false
+    $scope.view = MoviesView
 
     win.on('maximize', function() {
-      $scope.isMaximized = true;
-    });
+      $scope.isMaximized = true
+    })
 
     win.on('unmaximize', function() {
-      $scope.isMaximized = false;
-    });
+      $scope.isMaximized = false
+    })
 
     $scope.minimize = function() {
-      win.minimize();
+      win.minimize()
     }
 
     $scope.close = function() {
-      win.close();
+      win.close()
     }
 
     $scope.maximize = function() {
       if ($scope.isMaximized)
-        win.unmaximize();
+        win.unmaximize()
       else
-        win.maximize();
+        win.maximize()
     }
 
     $scope.showDevTools = function() {
@@ -55,4 +55,4 @@ headerControllers.controller('HeaderCtrl', ['$scope', 'MoviesView',
 
     }
   }
-]);
+])

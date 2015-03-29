@@ -1,73 +1,74 @@
-'use strict';
+'use strict'
 
 /* Controllers */
 
-var moviesControllers = angular.module('moviesControllers', []);
+var moviesControllers = angular.module('moviesControllers', [])
 
 moviesControllers.controller('MovieListCtrl',
-  ['$scope', 'MoviesLocalDB', 'MoviesView', 'FilesFactory', 'MovieDB', '$location',
-  function($scope, MoviesLocalDB, MoviesView, FilesFactory, MovieDB, $location) {
-    var gui = require('nw.gui');
-
-    $scope.movies = MoviesLocalDB('movies').value();
-    $scope.tmdb = MoviesLocalDB('tmdb');
-    $scope.orderProp = 'fileName';
-    $scope.view = MoviesView;
+  ['$scope', 'MoviesLocalDB', 'MoviesView', 'FilesFactory',
+  function($scope, MoviesLocalDB, MoviesView, FilesFactory) {
+    $scope.movies = MoviesLocalDB('movies').value()
+    $scope.orderProp = 'fileName'
+    $scope.view = MoviesView
 
     FilesFactory.getFiles(function(files) {
-      var newfiles = 0;
-
       files.forEach(function (f) {
         if (!MoviesLocalDB('movies').find({path: f.path})) {
-          newfiles += 1;
-          MoviesLocalDB('movies').push(f);
-          console.log('New movie detected: '+f.fileName);
+          MoviesLocalDB('movies').push(f)
+          console.log('New movie detected: '+f.fileName)
+          $scope.$apply()
         }
-      });
+      })
+    })
+  }
+])
 
-      if (newfiles) {
-        $scope.movies = MoviesLocalDB('movies').value();
-        $scope.$apply();
-        MovieDB.update(function() { $scope.$apply(); });
-      }
-    });
+moviesControllers.controller('MovieListItemCtrl',
+  ['$scope', 'MoviesLocalDB', 'MovieDB', '$location',
+  function($scope, MoviesLocalDB, MovieDB, $location) {
+    var gui = require('nw.gui')
+    $scope.dbinfo = MoviesLocalDB('tmdb').find({id: $scope.movie.tmdbid})
 
-    MovieDB.update(function() { $scope.$apply(); });
+    MovieDB.check($scope.movie, function() {
+      $scope.dbinfo = MoviesLocalDB('tmdb').find({id: $scope.movie.tmdbid})
+      $scope.$apply()
+    })
 
-    $scope.countries = function(dbinfo) {
-      var ctrlist = dbinfo.production_countries.map(
+    $scope.countries = function() {
+      var ctrlist = $scope.dbinfo.production_countries.map(
         function (c) {
           return c['name']
         }
-      );
+      )
 
       return ctrlist.join(' / ')
     }
 
-    $scope.genres = function(dbinfo) {
-      var ctrlist = dbinfo.genres.map(
+    $scope.genres = function() {
+      var ctrlist = $scope.dbinfo.genres.map(
         function (c) {
           return c['name']
         }
-      );
+      )
 
       return ctrlist.join(' / ')
     }
 
     $scope.play = function(movie) {
-      console.log(movie.path);
-      gui.Shell.openItem(movie.path);
+      console.log(movie.path)
+      gui.Shell.openItem(movie.path)
     }
 
     $scope.info = function(movie) {
-      $location.path('/movie/'+movie.fileName);
-    };
+      $location.path('/movie/'+movie.fileName)
+    }
   }
-]);
+])
+
 
 moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'MoviesLocalDB',
   function($scope, $routeParams, MoviesLocalDB) {
-    $scope.movie = MoviesLocalDB('movies').find({fileName: $routeParams.movieId});
+    $scope.movie = MoviesLocalDB('movies').find({fileName: $routeParams.movieId})
     $scope.movieInfo = MoviesLocalDB('tmdb').find({id: $scope.movie.tmdbid})
   }
-]);
+])

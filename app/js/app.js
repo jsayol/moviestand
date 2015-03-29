@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 // Declare app level module which depends on views, and components
 var moviesApp = angular.module('myApp', [
@@ -6,11 +6,11 @@ var moviesApp = angular.module('myApp', [
   'headerControllers',
   'moviesControllers',
   'moviesServices'
-]);
+])
 
 // moviesApp.config(['$routeProvider', function($routeProvider) {
-//   $routeProvider.otherwise({redirectTo: '/view1'});
-// }]);
+//   $routeProvider.otherwise({redirectTo: '/view1'})
+// }])
 
 moviesApp.config(['$routeProvider',
   function($routeProvider) {
@@ -25,6 +25,6 @@ moviesApp.config(['$routeProvider',
       }).
       otherwise({
         redirectTo: '/'
-      });
+      })
   }
 ])
