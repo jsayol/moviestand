@@ -16,11 +16,11 @@ moviesApp.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
       when('/', {
-        templateUrl: 'partials/movie-list.html',
+        templateUrl: 'list/view.html',
         controller: 'MovieListCtrl'
       }).
       when('/movie/:movieId', {
-        templateUrl: 'partials/movie-detail.html',
+        templateUrl: 'details/view.html',
         controller: 'MovieDetailCtrl'
       }).
       otherwise({
@@ -28,3 +28,5 @@ moviesApp.config(['$routeProvider',
       })
   }
 ])
+
+var moviesControllers = angular.module('moviesControllers', [])

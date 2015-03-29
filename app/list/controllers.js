@@ -2,8 +2,6 @@
 
 /* Controllers */
 
-var moviesControllers = angular.module('moviesControllers', [])
-
 moviesControllers.controller('MovieListCtrl',
   ['$scope', 'MoviesLocalDB', 'MoviesView', 'FilesFactory',
   function($scope, MoviesLocalDB, MoviesView, FilesFactory) {
@@ -62,13 +60,5 @@ moviesControllers.controller('MovieListItemCtrl',
     $scope.info = function(movie) {
       $location.path('/movie/'+movie.fileName)
     }
-  }
-])
-
-
-moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'MoviesLocalDB',
-  function($scope, $routeParams, MoviesLocalDB) {
-    $scope.movie = MoviesLocalDB('movies').find({fileName: $routeParams.movieId})
-    $scope.movieInfo = MoviesLocalDB('tmdb').find({id: $scope.movie.tmdbid})
   }
 ])
