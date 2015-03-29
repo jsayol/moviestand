@@ -37,17 +37,18 @@ moviesServices.factory('MovieDB', ['MoviesLocalDB',
     var fs = require('fs')
     var async = require('async')
 
-    var queue = async.queue(function(task, callback) {
+    var queue = async.priorityQueue(function(task, callback) {
       api[task.method](task.args, function() {
         task.callback.apply(this, arguments)
         callback()
       })
-    }, 1)
+    }, 3)
 
     return {
-      makeRequest: function(method, args, callback) {
+      makeRequest: function(method, args, priority, callback) {
         queue.push(
           {method:method, args:args, callback:callback},
+          priority,
           function() { }
         )
 
@@ -57,7 +58,12 @@ moviesServices.factory('MovieDB', ['MoviesLocalDB',
       getID: function(movie, callback) {
         var match = movie.fileName.match(/^(.+) \(((19|20)[0-9][0-9])\)\.([a-zA-Z0-9_]+)$/)
         if (match) {
-          this.makeRequest('searchMovie', {query: match[1], year:match[2]}, function(err, res) {
+          var request = {
+            query: match[1],
+            year: match[2]
+          }
+
+          this.makeRequest('searchMovie', request, 20, function(err, res) {
             if (err) {
               movie.tmdbid = 'ERR_APIERROR'
               callback(err, movie)
@@ -79,8 +85,12 @@ moviesServices.factory('MovieDB', ['MoviesLocalDB',
       },
 
       updateInfo: function(movie, callback) {
-        // MoviesLocalDB
-        this.makeRequest('movieInfo', {id: movie.tmdbid}, function(err, res){
+        var request = {
+          id: movie.tmdbid,
+          append_to_response: 'trailers'
+        }
+
+        this.makeRequest('movieInfo', request, 10, function(err, res){
           if (err) {
             callback('ERR_APIERROR', movie)
           }
@@ -106,9 +116,8 @@ moviesServices.factory('MovieDB', ['MoviesLocalDB',
               console.log(err)
             }
             else {
-              console.log('Movie "'+movie.fileName+'" with id('+movie.tmdbid+') got info info.')
+              console.log('Movie "'+movie.fileName+'" with id('+movie.tmdbid+') got info.')
             }
-            console.log('UPDATE CALLBACK 2: '+callback)
             callback()
           })
         }
@@ -144,9 +153,11 @@ moviesServices.factory('MovieDB', ['MoviesLocalDB',
             }
           }
           else {
-            console.log('Movie "'+movie.path+'" no longer exists. Removing from DB.')
-            MoviesLocalDB('movies').remove({path: movie.path})
-            callback()
+            // TODO: Detect in the folder is not present (might be a removable drive)
+
+            // console.log('Movie "'+movie.path+'" no longer exists. Removing from DB.')
+            // MoviesLocalDB('movies').remove({path: movie.path})
+            // callback()
           }
         })
       },
@@ -199,8 +210,8 @@ moviesServices.factory('FilesFactory', [
     var fs = require('fs')
     var path = require('path')
 
-    var _FOLDER = '/media/josep/Data/Videos/Movies'
-    //var _FOLDER = '/media/josep/Seagate Backup Plus Drive/Videos/Movies'
+    // var _FOLDER = '/media/josep/Data/Videos/Movies'
+    var _FOLDER = '/media/josep/SeagateBackup/Videos/Movies'
     var _VALID_EXT = ['.mp4', '.mkv', '.avi']
     var _RECURSIVE = true
 

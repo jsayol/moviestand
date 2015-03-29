@@ -25,15 +25,16 @@ moviesControllers.controller('MovieListItemCtrl',
   ['$scope', 'MoviesLocalDB', 'MovieDB', '$location',
   function($scope, MoviesLocalDB, MovieDB, $location) {
     var gui = require('nw.gui')
-    $scope.dbinfo = MoviesLocalDB('tmdb').find({id: $scope.movie.tmdbid})
+
+    $scope.movieInfo = MoviesLocalDB('tmdb').find({id: $scope.movie.tmdbid})
 
     MovieDB.check($scope.movie, function() {
-      $scope.dbinfo = MoviesLocalDB('tmdb').find({id: $scope.movie.tmdbid})
+      $scope.movieInfo = MoviesLocalDB('tmdb').find({id: $scope.movie.tmdbid})
       $scope.$apply()
     })
 
     $scope.countries = function() {
-      var ctrlist = $scope.dbinfo.production_countries.map(
+      var ctrlist = $scope.movieInfo.production_countries.map(
         function (c) {
           return c['name']
         }
@@ -43,7 +44,7 @@ moviesControllers.controller('MovieListItemCtrl',
     }
 
     $scope.genres = function() {
-      var ctrlist = $scope.dbinfo.genres.map(
+      var ctrlist = $scope.movieInfo.genres.map(
         function (c) {
           return c['name']
         }

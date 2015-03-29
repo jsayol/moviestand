@@ -23,32 +23,32 @@
 
 
         <div class="poster">
-          <a ng-if="dbinfo" href="#/movie/{{movie.fileName}}">
-            <img ng-src="http://image.tmdb.org/t/p/w185{{dbinfo.poster_path}}">
+          <a ng-if="movieInfo" href="#/movie/{{movie.fileName}}">
+            <img ng-src="http://image.tmdb.org/t/p/w185{{movieInfo.poster_path}}">
           </a>
-          <img ng-if="!dbinfo" ng-src="img/poster-placeholder.png">
+          <img ng-if="!movieInfo" ng-src="img/poster-placeholder.png">
         </div>
 
         <div class="info">
 
-          <div ng-if="dbinfo">
+          <div ng-if="movieInfo">
             <div class="titleblock">
-              <div class="title">{{dbinfo.title}}</div>
-              <div class="year">({{dbinfo.release_date | date:'yyyy'}})</div>
+              <div class="title">{{movieInfo.title}}</div>
+              <div class="year">({{movieInfo.release_date | date:'yyyy'}})</div>
             </div>
             <div class="infoblock">
-              <div class="tagline">{{dbinfo.tagline}}</div>
+              <div class="tagline">{{movieInfo.tagline}}</div>
               <p>
-                <div>{{dbinfo.runtime}} min - {{genres()}}</div>
+                <div>{{movieInfo.runtime}} min - {{genres()}}</div>
                 <div>{{countries()}}</div>
               </p>
               <p>
-                <div class="overview">{{dbinfo.overview}}</div>
+                <div class="overview">{{movieInfo.overview}}</div>
               </p>
             </div>
           </div>
 
-          <div ng-hide="dbinfo">
+          <div ng-hide="movieInfo">
             <div class="titleblock">
               <div class="title">{{movie.fileName}}</div>
               <div class="year">-</div>
