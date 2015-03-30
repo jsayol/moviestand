@@ -208,8 +208,8 @@ moviesServices.factory('FilesFactory', [
     var fs = require('fs')
     var path = require('path')
 
-    var _FOLDER = '/media/josep/Data/Videos/Movies'
-    // var _FOLDER = '/media/josep/SeagateBackup/Videos/Movies'
+    // var _FOLDER = '/media/josep/Data/Videos/Movies'
+    var _FOLDER = '/media/josep/SeagateBackup/Videos/Movies'
     var _VALID_EXT = ['.mp4', '.mkv', '.avi']
     var _RECURSIVE = true
 

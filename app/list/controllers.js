@@ -17,13 +17,21 @@ moviesControllers.controller('MovieListCtrl',
     }
 
     FilesFactory.getFiles(function(files) {
+      console.log('Got '+files.length+' files')
+      var db = MoviesLocalDB('movies')
+      var current = db.pluck('path');
       files.forEach(function (f) {
-        if (!MoviesLocalDB('movies').find({path: f.path})) {
-          MoviesLocalDB('movies').push(f)
+        var pos = $.inArray(f.path, current)
+        if (pos < 0) {
+          db.push(f)
           console.log('New movie detected: '+f.fileName)
-          $scope.$apply()
+        }
+        else {
+          delete current[pos]
         }
       })
+      console.log('Finished processing files')
+      $scope.$apply()
     })
   }
 ])
