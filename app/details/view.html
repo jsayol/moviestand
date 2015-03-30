@@ -26,19 +26,19 @@
       </ul>
       <div class="controls">
         <button type="button" class="btn btn-primary" ng-click="play()">
-          <span class="glyphicon glyphicon-play-circle"> Play</span>
+          <span aria-hidden="true" class="glyphicon glyphicon-play-circle"> Play</span>
         </button>
 
         <div ng-if="movieInfo.trailers.youtube" class="btn-group">
           <button type="button" class="btn btn-primary" ng-click="watchtrailer()">
-            <span class="glyphicon glyphicon-film"> Watch trailer</span>
+            <span aria-hidden="true" class="glyphicon glyphicon-film"> Watch trailer</span>
           </button>
           <button ng-if="movieInfo.trailers.youtube.length > 1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
             <span class="caret"></span>
             <span class="sr-only">Toggle Dropdown</span>
           </button>
           <ul ng-if="movieInfo.trailers.youtube.length > 1" class="dropdown-menu" role="menu">
-            <li ng-repeat="trailer in movieInfo.trailers.youtube | orderBy:'name'">
+            <li ng-repeat="trailer in movieInfo.trailers.youtube">
               <a href="" ng-click="watchtrailer(trailer.source)">{{trailer.name}} ({{trailer.size}})</a>
             </li>
           </ul>
@@ -47,5 +47,12 @@
       <p class="tagline">{{movieInfo.tagline}}</p>
       <p class="overview">{{movieInfo.overview}}</p>
     </div>
+  </div>
+
+  <div class="trailerembed embed-responsive embed-responsive-16by9">
+    <div class="close glyphicon glyphicon-remove" ng-click="closetrailer()"></div>
+    <!-- <iframe id="ytplayer" class="embed-responsive-item" width="100%" height="100%" frameborder="0" type="text/html"></iframe> -->
+    <!-- <div id="ytplayer"></div> -->
+    <!-- <video id="ytplayer" src="" class="video-js vjs-default-skin" controls autoplay preload="auto" width="100%" height="100%"></video> -->
   </div>
 </div>

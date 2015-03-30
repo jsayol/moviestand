@@ -9,6 +9,13 @@ moviesControllers.controller('MovieListCtrl',
     $scope.orderProp = 'fileName'
     $scope.view = MoviesView
 
+    $scope.currentPage = 0
+    $scope.pageSize = 10
+
+    $scope.numberOfPages=function(){
+        return Math.ceil($scope.movies.length/$scope.pageSize);
+    }
+
     FilesFactory.getFiles(function(files) {
       files.forEach(function (f) {
         if (!MoviesLocalDB('movies').find({path: f.path})) {
@@ -20,6 +27,7 @@ moviesControllers.controller('MovieListCtrl',
     })
   }
 ])
+
 
 moviesControllers.controller('MovieListItemCtrl',
   ['$scope', 'MoviesLocalDB', 'MovieDB', '$location',

@@ -12,8 +12,8 @@ var moviesApp = angular.module('myApp', [
 //   $routeProvider.otherwise({redirectTo: '/view1'})
 // }])
 
-moviesApp.config(['$routeProvider',
-  function($routeProvider) {
+moviesApp.config(['$routeProvider', '$compileProvider',
+  function($routeProvider, $compileProvider) {
     $routeProvider.
       when('/', {
         templateUrl: 'list/view.html',
@@ -26,7 +26,19 @@ moviesApp.config(['$routeProvider',
       otherwise({
         redirectTo: '/'
       })
+
+    // $compileProvider.imgSrcSanitizationWhitelist('app://')
+    // $compileProvider.imgSrcSanitizationWhitelist('/^\s/img\//')
   }
 ])
 
 var moviesControllers = angular.module('moviesControllers', [])
+
+//We already have a limitTo filter built-in to angular,
+//let's make a startFrom filter
+moviesApp.filter('startFrom', function() {
+    return function(input, start) {
+        start = +start; //parse to int
+        return input.slice(start);
+    }
+})

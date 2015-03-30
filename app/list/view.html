@@ -8,9 +8,16 @@
     </select>
 
   -->
+  <button class="btn btn-primary" ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
+      Previous
+  </button>
+  {{currentPage+1}}/{{numberOfPages()}}
+  <button class="btn btn-primary" ng-disabled="currentPage >= movies.length/pageSize - 1" ng-click="currentPage=currentPage+1">
+      Next
+  </button>
 
   <ul class="movies" ng-class="view.mode">
-    <li ng-controller="MovieListItemCtrl" ng-repeat="movie in movies | filter:query | orderBy:orderProp track by movie.path" class="movie-listing">
+    <li ng-controller="MovieListItemCtrl" ng-repeat="movie in movies | startFrom:currentPage*pageSize | limitTo:pageSize | orderBy:orderProp track by movie.path" class="movie-listing">
 
       <div class="movie">
 
