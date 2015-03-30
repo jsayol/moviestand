@@ -2,12 +2,12 @@
 
 /* Controllers */
 
-moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'MoviesLocalDB', '$timeout',
-  function($scope, $routeParams, MoviesLocalDB, $timeout) {
+moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFactory', '$timeout',
+  function($scope, $routeParams, DBFactory, $timeout) {
     var gui = require('nw.gui')
 
-    $scope.movie = MoviesLocalDB('movies').find({fileName: $routeParams.movieId})
-    $scope.movieInfo = MoviesLocalDB('tmdb').find({id: $scope.movie.tmdbid})
+    $scope.movie = DBFactory.movies.find({fileName: $routeParams.movieId})
+    $scope.movieInfo = DBFactory.tmdb.find({id: $scope.movie.tmdbid})
 
     $('.img-loader').on('load', function(e) {
       $(this).remove()

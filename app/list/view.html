@@ -8,16 +8,18 @@
     </select>
 
   -->
-  <button class="btn btn-primary" ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
+
+  <!-- <button class="btn btn-primary" ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
       Previous
   </button>
   {{currentPage+1}}/{{numberOfPages()}}
   <button class="btn btn-primary" ng-disabled="currentPage >= movies.length/pageSize - 1" ng-click="currentPage=currentPage+1">
       Next
-  </button>
+  </button> -->
 
   <ul class="movies" ng-class="view.mode">
-    <li ng-controller="MovieListItemCtrl" ng-repeat="movie in movies | startFrom:currentPage*pageSize | limitTo:pageSize | orderBy:orderProp track by movie.path" class="movie-listing">
+    <!-- <li ng-repeat="movie in movies | startFrom:currentPage*pageSize | limitTo:pageSize | orderBy:orderProp track by movie.path" class="movie-listing"> -->
+    <li ng-repeat="movie in movies | orderBy:orderProp track by movie.path" class="movie-listing">
 
       <div class="movie">
 
@@ -28,34 +30,33 @@
           <li class="glyphicon glyphicon-eye-open markwatched" title="Mark as watched" ng-click="watched(movie)"></li>
         </ul>
 
-
         <div class="poster">
-          <a ng-if="movieInfo" href="#/movie/{{movie.fileName}}">
-            <img ng-src="http://image.tmdb.org/t/p/w185{{movieInfo.poster_path}}">
+          <a ng-if="movie.poster_path" href="#/movie/{{movie.fileName}}">
+            <img ng-src="http://image.tmdb.org/t/p/w130{{movie.poster_path}}">
           </a>
-          <img ng-if="!movieInfo" ng-src="img/poster-placeholder.png">
+          <img ng-if="!movie.poster_path" ng-src="img/poster-placeholder.png">
         </div>
 
         <div class="info">
 
-          <div ng-if="movieInfo">
+          <div ng-if="movie.title">
             <div class="titleblock">
-              <div class="title">{{movieInfo.title}}</div>
-              <div class="year">({{movieInfo.release_date | date:'yyyy'}})</div>
+              <div class="title">{{movie.title}}</div>
+              <div class="year">({{movie.release_date | date:'yyyy'}})</div>
             </div>
             <div class="infoblock">
-              <div class="tagline">{{movieInfo.tagline}}</div>
+              <div class="tagline">{{movie.tagline}}</div>
               <p>
-                <div>{{movieInfo.runtime}} min - {{genres()}}</div>
-                <div>{{countries()}}</div>
+                <div>{{movie.runtime}} min - {{genres(movie)}}</div>
+                <div>{{countries(movie)}}</div>
               </p>
               <p>
-                <div class="overview">{{movieInfo.overview}}</div>
+                <div class="overview">{{movie.overview}}</div>
               </p>
             </div>
           </div>
 
-          <div ng-hide="movieInfo">
+          <div ng-if="!movie.title">
             <div class="titleblock">
               <div class="title">{{movie.fileName}}</div>
               <div class="year">-</div>

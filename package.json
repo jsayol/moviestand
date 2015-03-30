@@ -31,7 +31,8 @@
     "position": "center"
   },
   "webkit": {
-    "plugin": false
+    "plugin": false,
+    "page-cache": true
   },
   "scripts": {
     "postinstall": "bower install",

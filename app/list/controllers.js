@@ -3,22 +3,22 @@
 /* Controllers */
 
 moviesControllers.controller('MovieListCtrl',
-  ['$scope', 'MoviesLocalDB', 'MoviesView', 'FilesFactory',
-  function($scope, MoviesLocalDB, MoviesView, FilesFactory) {
-    $scope.movies = MoviesLocalDB('movies').value()
+  ['$scope', 'DBFactory', 'MoviesView', 'FilesFactory', 'TMDBApiFactory', '$location',
+  function($scope, DBFactory, MoviesView, FilesFactory, TMDBApiFactory, $location) {
+    $scope.movies = DBFactory.movies.value()
     $scope.orderProp = 'fileName'
     $scope.view = MoviesView
 
     $scope.currentPage = 0
     $scope.pageSize = 10
 
-    $scope.numberOfPages=function(){
+    $scope.numberOfPages = function(){
         return Math.ceil($scope.movies.length/$scope.pageSize);
     }
 
     FilesFactory.getFiles(function(files) {
       console.log('Got '+files.length+' files')
-      var db = MoviesLocalDB('movies')
+      var db = DBFactory.movies
       var current = db.pluck('path');
       files.forEach(function (f) {
         var pos = $.inArray(f.path, current)
@@ -32,41 +32,20 @@ moviesControllers.controller('MovieListCtrl',
       })
       console.log('Finished processing files')
       $scope.$apply()
-    })
-  }
-])
 
-
-moviesControllers.controller('MovieListItemCtrl',
-  ['$scope', 'MoviesLocalDB', 'MovieDB', '$location',
-  function($scope, MoviesLocalDB, MovieDB, $location) {
-    var gui = require('nw.gui')
-
-    $scope.movieInfo = MoviesLocalDB('tmdb').find({id: $scope.movie.tmdbid})
-
-    MovieDB.check($scope.movie, function() {
-      $scope.movieInfo = MoviesLocalDB('tmdb').find({id: $scope.movie.tmdbid})
-      $scope.$apply()
+      TMDBApiFactory.checkAll(function() { $scope.$apply() })
     })
 
-    $scope.countries = function() {
-      var ctrlist = $scope.movieInfo.production_countries.map(
-        function (c) {
-          return c['name']
-        }
-      )
-
-      return ctrlist.join(' / ')
+    $scope.countries = function(movie) {
+      return movie.production_countries
+        .map(function (c) { return c['name'] })
+        .join(' / ')
     }
 
-    $scope.genres = function() {
-      var ctrlist = $scope.movieInfo.genres.map(
-        function (c) {
-          return c['name']
-        }
-      )
-
-      return ctrlist.join(' / ')
+    $scope.genres = function(movie) {
+      return movie.genres
+        .map(function (c) { return c['name'] })
+        .join(' / ')
     }
 
     $scope.play = function(movie) {

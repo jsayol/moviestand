@@ -12,15 +12,18 @@ moviesServices.factory('LowDBFactory', [
   }
 ])
 
-moviesServices.factory('MoviesLocalDB', ['LowDBFactory',
+moviesServices.factory('DBFactory', ['LowDBFactory',
   function(LowDBFactory) {
-    var lowdb = LowDBFactory('db.json')
-    return lowdb
+    var prefix = 'local_'
+    var moviesDB = LowDBFactory(prefix + 'movies.db.json')
+    var tmdbDB = LowDBFactory(prefix + 'tmdb.db.json')
 
-    // return {
-    //   'getDB': function(db) { return lowdb(db) },
-    //
-    // }
+    return {
+      movies: moviesDB('movies'),
+      tmdb: tmdbDB('tmdb'),
+      moviesSave: moviesDB.save,
+      tmdbSave: tmdbDB.save
+    }
   }
 ])
 
@@ -31,8 +34,8 @@ moviesServices.factory('MoviesView', [
   }
 ])
 
-moviesServices.factory('MovieDB', ['MoviesLocalDB',
-  function(MoviesLocalDB) {
+moviesServices.factory('TMDBApiFactory', ['DBFactory',
+  function(DBFactory) {
     var api = require('moviedb')('306b27f6d4bfe68442cd66152d01a134')
     var fs = require('fs')
     var async = require('async')
@@ -44,6 +47,8 @@ moviesServices.factory('MovieDB', ['MoviesLocalDB',
       })
     }, 3)
 
+    var tmdbIDs = DBFactory.tmdb.pluck('id')
+
     return {
       makeRequest: function(method, args, priority, callback) {
         queue.push(
@@ -54,7 +59,7 @@ moviesServices.factory('MovieDB', ['MoviesLocalDB',
       },
 
       getID: function(movie, callback) {
-        var match = movie.fileName.match(/^(.+) \(((19|20)[0-9][0-9])\)\.([a-zA-Z0-9_]+)$/)
+        var match = movie.fileName.match(/^(.+)\s*\(((19|20)[0-9][0-9])\)\.([a-zA-Z0-9_]+)$/)
         if (match) {
           var request = {
             query: match[1],
@@ -74,10 +79,12 @@ moviesServices.factory('MovieDB', ['MoviesLocalDB',
               movie.tmdbid = 'ERR_NOTFOUND'
               callback('ERR_NOTFOUND', movie)
             }
+            DBFactory.moviesSave()
           })
         }
         else {
           movie.tmdbid = 'ERR_FILENAME'
+          DBFactory.moviesSave()
           callback('ERR_FILENAME', movie)
         }
       },
@@ -90,34 +97,57 @@ moviesServices.factory('MovieDB', ['MoviesLocalDB',
 
         this.makeRequest('movieInfo', request, 10, function(err, res){
           if (err) {
-            callback('ERR_APIERROR', movie)
+            callback('ERR_APIERROR', movie, null)
           }
           else if (res) {
-            var tmdb = MoviesLocalDB('tmdb')
-            tmdb.remove({id: res.id})
-            tmdb.push(res)
-            callback(null, movie)
+            DBFactory.tmdb.remove({id: res.id})
+            DBFactory.tmdb.push(res)
+            tmdbIDs = DBFactory.tmdb.pluck('id')
+            callback(null, movie, res)
           }
           else {
             movie.tmdbid = 'ERR_NOTFOUND'
-            callback('ERR_NOTFOUND', movie)
+            DBFactory.moviesSave()
+            callback('ERR_NOTFOUND', movie, null)
           }
         })
       },
 
       checkUpdateInfo: function(movie, callback) {
-        if (!MoviesLocalDB('tmdb').find({id: movie.tmdbid})) {
+        if ($.inArray(movie.tmdbid, tmdbIDs) < 0) {
           console.log('Movie "'+movie.fileName+'" has id('+movie.tmdbid+') but no info. Requesting...')
-          this.updateInfo(movie, function(err, m) {
+          this.updateInfo(movie, function(err, m, info) {
             if (err) {
               console.log('Movie "'+movie.fileName+'" with id('+movie.tmdbid+') error getting info.')
               console.log(err)
             }
             else {
               console.log('Movie "'+movie.fileName+'" with id('+movie.tmdbid+') got info.')
+              movie.title = info.title
+              movie.tagline = info.tagline
+              movie.overview = info.overview
+              movie.poster_path = info.poster_path
+              movie.release_date = info.release_date
+              movie.genres = info.genres
+              movie.runtime = info.runtime
+              movie.production_countries = info.production_countries
+              DBFactory.moviesSave()
             }
             callback()
           })
+        }
+        else if (!movie.title) {
+          var localInfo = DBFactory.tmdb.find({id: movie.tmdbid})
+          movie.title = localInfo.title
+          movie.tagline = localInfo.tagline
+          movie.overview = localInfo.overview
+          movie.poster_path = localInfo.poster_path
+          movie.release_date = localInfo.release_date
+          movie.genres = localInfo.genres
+          movie.runtime = localInfo.runtime
+          movie.production_countries = localInfo.production_countries
+          DBFactory.moviesSave()
+          callback()
         }
       },
 
@@ -126,9 +156,12 @@ moviesServices.factory('MovieDB', ['MoviesLocalDB',
 
         fs.stat(movie.path, function(err, stats) {
           if (!err && stats && stats.isFile()) {
+            if (movie.tmdbid && (movie.tmdbid == 'ERR_APIERROR')) {
+              console.log('Movie "'+movie.fileName+'" had a previous error('+movie.tmdbid+'). Retrying...')
+              delete movie.tmdbid
+            }
             if (movie.tmdbid) {
               if ((typeof(movie.tmdbid) == 'string') && (movie.tmdbid.substr(0,4) == 'ERR_')) {
-                // nothing to do here
                 console.log('Movie "'+movie.fileName+'" had a previous error('+movie.tmdbid+').')
               }
               else {
@@ -144,58 +177,26 @@ moviesServices.factory('MovieDB', ['MoviesLocalDB',
                 }
                 else {
                   console.log('Movie "'+m.fileName+'" got id('+m.tmdbid+').')
-                  callback()
                   self.checkUpdateInfo(m, callback)
                 }
               })
             }
           }
           else {
-            // TODO: Detect in the folder is not present (might be a removable drive)
+            // TODO: Detect if the folder is not present (might be a removable drive)
 
             // console.log('Movie "'+movie.path+'" no longer exists. Removing from DB.')
-            // MoviesLocalDB('movies').remove({path: movie.path})
+            // DBFactory.movies.remove({path: movie.path})
             // callback()
           }
         })
       },
 
-      update: function(callback) {
+      checkAll: function(callback) {
+        console.log('Checking all files in the DB...')
         var self = this
-
-        MoviesLocalDB('movies').forEach(function(movie) {
-          fs.stat(movie.path, function(err, stats) {
-            if (!err && stats && stats.isFile()) {
-              if (movie.tmdbid) {
-                if ((typeof(movie.tmdbid) == 'string') && (movie.tmdbid.substr(0,4) == 'ERR_')) {
-                  // nothing to do here
-                  console.log('Movie "'+movie.fileName+'" had a previous error('+movie.tmdbid+').')
-                }
-                else {
-                  self.checkUpdateInfo(movie, callback)
-                }
-              }
-              else {
-                console.log('Movie "'+movie.fileName+'" has no id. Requesting...')
-                self.getID(movie, function(err, m) {
-                  if (err) {
-                    console.log('Movie "'+movie.fileName+'" error getting id.')
-                    console.log(err)
-                  }
-                  else {
-                    console.log('Movie "'+m.fileName+'" got id('+m.tmdbid+').')
-                    callback()
-                    self.checkUpdateInfo(m, callback)
-                  }
-                })
-              }
-            }
-            else {
-              console.log('Movie "'+movie.path+'" no longer exists. Removing from DB.')
-              MoviesLocalDB('movies').remove({path: movie.path})
-              callback()
-            }
-          })
+        DBFactory.movies.forEach(function(movie) {
+          self.check(movie, callback)
         })
 
       }
@@ -208,8 +209,8 @@ moviesServices.factory('FilesFactory', [
     var fs = require('fs')
     var path = require('path')
 
-    // var _FOLDER = '/media/josep/Data/Videos/Movies'
-    var _FOLDER = '/media/josep/SeagateBackup/Videos/Movies'
+    var _FOLDER = '/media/josep/Data/Videos/Movies'
+    // var _FOLDER = '/media/josep/SeagateBackup/Videos/Movies'
     var _VALID_EXT = ['.mp4', '.mkv', '.avi']
     var _RECURSIVE = true
 
@@ -257,7 +258,7 @@ moviesServices.factory('FilesFactory', [
               'fileName': path.basename(f)
             }
           })
-          callback(files)
+          callback(files.sort(function(a,b) { a.fileName>b.fileName ? 1 : -1 }))
         })
       }
     }

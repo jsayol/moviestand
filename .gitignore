@@ -33,8 +33,9 @@ bower_components
 
 # App database and settings
 db.json
+*.db.json
+.~*.db.json
 conf.json
-.~db.json
 
 # Temporary ignores, will remove these eventually
 test
