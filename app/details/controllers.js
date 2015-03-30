@@ -42,11 +42,9 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFa
     $scope.play = function(internally) {
       if (internally) {
         var stream = HTTPStreamerFactory.addFile($scope.movie.path)
-        console.log(stream)
         var video = $('<video />')
           .attr({
             id:"videoplayer",
-            // src: 'http://127.0.0.1:1337/'+encodeURI($scope.movie.path),
             src: stream,
             controls: true,
             autoplay: "autoplay",
@@ -59,17 +57,14 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFa
         $('.videoembed').append(video)
         $('.videoembed').show()
 
-        // videojs.options.flash.swf = "../lib/video-js/video-js.swf"
-
         videojs(
           'videoplayer',
           {
             techOrder: ["html5", "flash"],
           },
           function() {
-            // var player = this
-            // player.load().play()
-            this.play()
+            // this.play()
+            this.on("ended", $scope.closevideo);
           }
         )
       }
@@ -94,8 +89,6 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFa
       $('.videoembed').append(video)
       $('.videoembed').show()
 
-      // videojs.options.flash.swf = "../lib/video-js/video-js.swf"
-
       videojs(
         'videoplayer',
         {
@@ -115,7 +108,7 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFa
 
     }
 
-    $scope.closevideo = function() {
+    $scope.closevideo = function(youtube) {
       // videojs('videoplayer').pause()
       videojs('videoplayer').dispose()
       $('.videoembed').hide()
