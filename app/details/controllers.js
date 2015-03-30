@@ -108,7 +108,7 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFa
 
     }
 
-    $scope.closevideo = function(youtube) {
+    $scope.closevideo = function() {
       // videojs('videoplayer').pause()
       videojs('videoplayer').dispose()
       $('.videoembed').hide()
