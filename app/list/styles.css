@@ -1,6 +1,9 @@
 
 /* Movie list: General */
 
+.list-container {
+}
+
 .movies {
   list-style: none;
   margin: 0;

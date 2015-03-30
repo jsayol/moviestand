@@ -1,58 +1,72 @@
 <div class="details-container">
-  <img class="img-loader" ng-src="http://image.tmdb.org/t/p/w780{{movieInfo.backdrop_path}}"></img>
+  <!-- <div class="close glyphicon glyphicon-remove" ng-click="goback()"></div> -->
+
+  <img class="background-loader" ng-src="http://image.tmdb.org/t/p/w780{{movieInfo.backdrop_path}}"></img>
 
   <div class="backdrop"></div>
 
   <div class="content">
-    <div class="" style="position:relative; width: 10%; min-width:30px"></div>
     <div class="left">
       <div class="postercontainer">
         <img class="poster img-responsive" ng-src="http://image.tmdb.org/t/p/w342{{movieInfo.poster_path}}">
       </div>
     </div>
     <div class="right">
-      <h1 class="title">{{movieInfo.title}}</h1>
-      <ul class="info">
-        <li>{{movieInfo.release_date | date:'yyyy'}}</li>
-        <li>{{movieInfo.runtime}} min</li>
-        <li>{{genres()}}</li>
-        <li data-toggle="tooltip" data-placement="right" title="{{movieInfo.vote_average}}/10">
-          <span class="glyphicon glyphicon-star"></span>
-          <span class="glyphicon glyphicon-star"></span>
-          <span class="glyphicon glyphicon-star"></span>
-          <span class="glyphicon glyphicon-star-empty"></span>
-          <span class="glyphicon glyphicon-star-empty"></span>
-        </li>
-      </ul>
-      <div class="controls">
-        <button type="button" class="btn btn-primary" ng-click="play()">
-          <span aria-hidden="true" class="glyphicon glyphicon-play-circle"> Play</span>
-        </button>
+      <div class="rightcontainer">
+        <h1 class="title">{{movieInfo.title}}</h1>
+        <ul class="info">
+          <li>{{movieInfo.release_date | date:'yyyy'}}</li>
+          <li>{{movieInfo.runtime}} min</li>
+          <li>{{genres()}}</li>
+          <li ng-if="movieInfo.imdb_id"><span ng-click="gotoimdb()" class="imdb" title="Go to imdb.com"></span></li>
+          <li title="{{movieInfo.vote_average}}/10" star-rating star-rating-value="movieInfo.vote_average/2" star-rating-max="5"></li>
+        </ul>
+        <div class="controls">
 
-        <div ng-if="movieInfo.trailers.youtube" class="btn-group">
-          <button type="button" class="btn btn-primary" ng-click="watchtrailer()">
-            <span aria-hidden="true" class="glyphicon glyphicon-film"> Watch trailer</span>
+          <div class="btn-group">
+            <button type="button" class="btn btn-primary btn-sm" ng-click="play()">
+              <span class="glyphicon glyphicon-play"> Play</span>
+            </button>
+            <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="" ng-click="play()">Default player</a></li>
+              <li><a href="" ng-click="play(true)">Internally</a></li>
+            </ul>
+          </div>
+
+          <div ng-if="movieInfo.trailers.youtube" class="btn-group">
+            <button type="button" class="btn btn-primary btn-sm" ng-click="watchtrailer()">
+              <span aria-hidden="true" class="glyphicon glyphicon-film"> Watch trailer</span>
+            </button>
+            <button ng-if="movieInfo.trailers.youtube.length > 1" type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul ng-if="movieInfo.trailers.youtube.length > 1" class="dropdown-menu" role="menu">
+              <li ng-repeat="trailer in movieInfo.trailers.youtube">
+                <a href="" ng-click="watchtrailer(trailer.source)">{{trailer.name}} ({{trailer.size}})</a>
+              </li>
+            </ul>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-sm" ng-click="open()">
+            <span aria-hidden="true" class="glyphicon glyphicon-folder-open"> Show folder</span>
           </button>
-          <button ng-if="movieInfo.trailers.youtube.length > 1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-            <span class="caret"></span>
-            <span class="sr-only">Toggle Dropdown</span>
-          </button>
-          <ul ng-if="movieInfo.trailers.youtube.length > 1" class="dropdown-menu" role="menu">
-            <li ng-repeat="trailer in movieInfo.trailers.youtube">
-              <a href="" ng-click="watchtrailer(trailer.source)">{{trailer.name}} ({{trailer.size}})</a>
-            </li>
-          </ul>
+
+        </div>
+
+        <div class="detailtext">
+          <p class="tagline">{{movieInfo.tagline}}</p>
+          <p class="overview">{{movieInfo.overview}}</p>
         </div>
       </div>
-      <p class="tagline">{{movieInfo.tagline}}</p>
-      <p class="overview">{{movieInfo.overview}}</p>
     </div>
   </div>
 
-  <div class="trailerembed embed-responsive embed-responsive-16by9">
-    <div class="close glyphicon glyphicon-remove" ng-click="closetrailer()"></div>
-    <!-- <iframe id="ytplayer" class="embed-responsive-item" width="100%" height="100%" frameborder="0" type="text/html"></iframe> -->
-    <!-- <div id="ytplayer"></div> -->
-    <!-- <video id="ytplayer" src="" class="video-js vjs-default-skin" controls autoplay preload="auto" width="100%" height="100%"></video> -->
+  <div class="videoembed embed-responsive embed-responsive-16by9">
+    <div class="close glyphicon glyphicon-remove" ng-click="closevideo()"></div>
   </div>
 </div>

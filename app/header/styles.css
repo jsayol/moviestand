@@ -15,9 +15,10 @@ header {
   background: rgba(23, 24, 27, 1);
   color: #cdcdcd;
 
-  /*-webkit-border-top-left-radius: 5px;*/
-  /*-webkit-border-top-right-radius: 5px;*/
-  /*-webkit-box-shadow: 0 20px 20px -20px rgba(0,0,0,0.75);*/
+  /*border-top-left-radius: 5px;
+  border-top-right-radius: 5px;*/
+
+  /*-webkit-box-shadow: 0px 5px 20px 0px rgba(20, 20, 20, 0.75);*/
 }
 
 

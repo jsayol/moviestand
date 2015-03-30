@@ -34,11 +34,22 @@ moviesApp.config(['$routeProvider', '$compileProvider',
 
 var moviesControllers = angular.module('moviesControllers', [])
 
-//We already have a limitTo filter built-in to angular,
-//let's make a startFrom filter
+// We already have a limitTo filter built-in to angular,
+// Let's make a startFrom filter
 moviesApp.filter('startFrom', function() {
     return function(input, start) {
         start = +start; //parse to int
         return input.slice(start);
     }
 })
+
+// If a user drops a file on the app's window, that file will replace
+// the whole app. Prevent that behaviour.
+document.addEventListener('dragover', function(e){
+  e.preventDefault();
+  e.stopPropagation();
+}, false);
+document.addEventListener('drop', function(e){
+  e.preventDefault();
+  e.stopPropagation();
+}, false);
