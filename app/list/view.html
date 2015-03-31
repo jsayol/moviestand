@@ -19,7 +19,7 @@
 
   <ul class="movies" ng-class="view.mode">
     <!-- <li ng-repeat="movie in movies | startFrom:currentPage*pageSize | limitTo:pageSize | orderBy:orderProp track by movie.path" class="movie-listing"> -->
-    <li ng-repeat="movie in movies | orderBy:orderProp track by movie.path" class="movie-listing">
+    <li ng-repeat="movie in movies | filter:{ title:filter.query } | movieFilter:filter.genre:filter.country | orderBy:orderProp track by movie.path" class="movie-listing">
 
       <div class="movie">
 

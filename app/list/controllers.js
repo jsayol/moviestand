@@ -3,11 +3,12 @@
 /* Controllers */
 
 moviesControllers.controller('MovieListCtrl',
-  ['$scope', 'DBFactory', 'MoviesView', 'FilesFactory', 'TMDBApiFactory', '$location',
-  function($scope, DBFactory, MoviesView, FilesFactory, TMDBApiFactory, $location) {
+  ['$scope', 'DBFactory', 'MoviesView', 'FilesFactory', 'TMDBApiFactory', 'FilterFactory', '$location',
+  function($scope, DBFactory, MoviesView, FilesFactory, TMDBApiFactory, FilterFactory, $location) {
     $scope.movies = DBFactory.movies.value()
     $scope.orderProp = 'fileName'
     $scope.view = MoviesView
+    $scope.filter = FilterFactory
 
     $scope.currentPage = 0
     $scope.pageSize = 10

@@ -19,6 +19,7 @@ moviesServices.factory('DBFactory', ['LowDBFactory',
     var tmdbDB = LowDBFactory(prefix + 'tmdb.db.json')
 
     return {
+      collections: moviesDB('collections'),
       movies: moviesDB('movies'),
       tmdb: tmdbDB('tmdb'),
       moviesSave: moviesDB.save,
@@ -29,8 +30,30 @@ moviesServices.factory('DBFactory', ['LowDBFactory',
 
 moviesServices.factory('MoviesView', [
   function() {
-    var view = {mode: 'grid'}
-    return view
+    var obj = {
+      mode: 'grid',
+      isMaximized: false,
+      gui: require('nw.gui')
+    }
+
+    obj.win = obj.gui.Window.get()
+
+    obj.isFullscreen = obj.win.isFullscreen
+
+    obj.toggleFullscreen = function() { return obj.win.toggleFullscreen() }
+
+    obj.win.on('enter-fullscreen', function() {
+      console.log('entering fullscreen');
+      obj.isFullscreen = true
+      $('body').addClass('fullscreen')
+    })
+    obj.win.on('leave-fullscreen', function() {
+      console.log('leaving fullscreen');
+      obj.isFullscreen = false
+      $('body').removeClass('fullscreen')
+    })
+
+    return obj
   }
 ])
 

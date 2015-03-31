@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <title>Angular Movies</title>
   <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">
-  <link rel="stylesheet" href="header/styles.css">
+  <link rel="stylesheet" href="header/header.css">
+  <link rel="stylesheet" href="header/navbar.css">
   <link rel="stylesheet" href="list/styles.css">
   <link rel="stylesheet" href="details/styles.css">
   <link rel="stylesheet" href="../lib/video-js/video-js.css" />
@@ -21,6 +22,7 @@
 
   <script src="main/app.js"></script>
   <script src="main/services.js"></script>
+  <script src="main/filters.js"></script>
   <script src="main/server.js"></script>
   <script src="header/controllers.js"></script>
   <script src="list/controllers.js"></script>
@@ -30,7 +32,7 @@
 
   <header ng-controller="HeaderCtrl" ng-dblclick="maximize()">
     <ul class="left">
-      <li class="glyphicon glyphicon-fullscreen" title="Fullscreen" ng-click="toggleFullscreen()"></li>
+      <li class="glyphicon glyphicon-fullscreen" title="Fullscreen" ng-click="view.toggleFullscreen()"></li>
     </ul>
     <ul class="right">
       <li class="glyphicon glyphicon-arrow-left" title="Back" ng-click="historyBack()"></li>
@@ -39,14 +41,78 @@
       <li class="glyphicon glyphicon-cog" title="DevTools" ng-click="showDevTools()"></li>
       <li class="glyphicon glyphicon-repeat" title="Reload" ng-click="reload()"></li>
       <li>&nbsp;</li>
-      <li class="glyphicon glyphicon-th" title="Grid" ng-click="view.mode='grid'"></li>
-      <li class="glyphicon glyphicon-th-list" title="List" ng-click="view.mode='list'"></li>
-      <li>&nbsp;</li>
       <li class="glyphicon glyphicon-minus-sign" title="Minimize" ng-click="minimize()"></li>
       <li class="glyphicon glyphicon-plus-sign" title="Maximize" ng-click="maximize()"></li>
       <li class="glyphicon glyphicon-remove-sign" title="Close" ng-click="close()"></li>
     </ul>
   </header>
+
+  <nav ng-controller="NavbarCtrl" class="navbar navbar-default navbar-sm navbar-fixed-top" ng-dblclick="maximize()">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+      <!-- <div id="navbar"> -->
+        <div class="glyphicon glyphicon-fullscreen fullscreentoggle" title="Fullscreen" ng-click="view.toggleFullscreen()"></div>
+        <ul class="nav navbar-nav">
+          <li ng-class="{active: selected('/collection/movies')}"><a href="#/collection/movies">Movies <span class="badge">42</span></a></li>
+          <li ng-class="{active: selected('/collection/movies2')}"><a href="#/collection/movies2">Movies 2 <span class="badge">345</span></a></li>
+          <li class="dropdown">
+            <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Genre <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li ng-class="{active: !filter.genre}"><a href=""ng-click="filter.genre=null">All</a></li>
+              <li class="divider"></li>
+              <!-- <li class="dropdown-header">Nav header</li> -->
+              <li ng-repeat="genre in filter.genres() | orderBy:'name'" ng-class="{active: genre.id==filter.genre}">
+                <a href="" ng-click="filter.genre=genre.id">
+                  <span class="countbybadge"><span class="badge">{{countByGenre(genre.id)}}</span></span> {{genre.name}}
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Country <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li ng-class="{active: !filter.country}"><a href="" ng-click="filter.country=null">All</a></li>
+              <li class="divider"></li>
+              <!-- <li class="dropdown-header">Nav header</li> -->
+              <li ng-repeat="country in filter.countries() | orderBy:'name'" ng-class="{active: country.iso_3166_1==filter.country}">
+                <a href="" ng-click="filter.country=country.iso_3166_1">
+                  <span class="countbybadge"><span class="badge">{{countByCountry(country.iso_3166_1)}}</span></span> {{country.name}}
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <form class="navbar-form navbar-left" role="search">
+            <div class="input-group">
+              <input ng-model="filter.query" type="text" class="form-control searchbox" placeholder="Search">
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
+              </div>
+            </div>
+          </form>
+          <div class="btn-group navbar-form navbar-left viewbuttons" data-toggle="buttons">
+            <label class="btn btn-default glyphicon glyphicon-th" ng-class="{active: view.mode=='grid'}" title="Grid" ng-click="view.mode='grid'">
+              <input type="radio" name="viewMode" value="grid">
+            </label>
+            <label class="btn btn-default glyphicon glyphicon-th-list" ng-class="{active: view.mode=='list'}" title="List" ng-click="view.mode='list'">
+              <input type="radio" name="viewMode" value="list">
+            </label>
+          </div>
+          <li ng-class="{active: selected('/settings')}"><a href="#/settings">Settings</a></li>
+          <!-- <li class="active"><a href="./">Fixed top <span class="sr-only">(current)</span></a></li> -->
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div>
+  </nav>
 
   <div class="view-container">
     <div ng-view class="view-frame"></div>

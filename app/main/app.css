@@ -20,7 +20,7 @@ body {
 
 div.view-container {
   position: absolute;
-  top: 25px;
+  top: 60px;
   bottom: 0px;
   left: 0px;
   right: 0px;
@@ -28,6 +28,10 @@ div.view-container {
   background: rgb(23, 24, 27);
   color: #cdcdcd;
   /*-webkit-box-shadow: inset 0px 25px 20px -20px rgba(20, 20, 20, 0.75);*/
+}
+
+body.fullscreen div.view-container {
+  top: 35px;
 }
 
 .view-frame {

@@ -19,6 +19,10 @@ moviesApp.config(['$routeProvider', '$compileProvider',
         templateUrl: 'list/view.html',
         controller: 'MovieListCtrl'
       }).
+      when('/collection/:category', {
+        templateUrl: 'list/view.html',
+        controller: 'MovieListCtrl'
+      }).
       when('/movie/:movieId', {
         templateUrl: 'details/view.html',
         controller: 'MovieDetailCtrl'

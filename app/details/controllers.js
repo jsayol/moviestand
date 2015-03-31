@@ -2,12 +2,14 @@
 
 /* Controllers */
 
-moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFactory', 'HTTPStreamerFactory', '$timeout',
-  function($scope, $routeParams, DBFactory, HTTPStreamerFactory, $timeout) {
+moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFactory', 'HTTPStreamerFactory', 'MoviesView', '$timeout',
+  function($scope, $routeParams, DBFactory, HTTPStreamerFactory, MoviesView, $timeout) {
     var gui = require('nw.gui')
+    var win = gui.Window.get()
 
     $scope.movie = DBFactory.movies.find({fileName: $routeParams.movieId})
     $scope.movieInfo = DBFactory.tmdb.find({id: $scope.movie.tmdbid})
+    $scope.view = MoviesView
 
     $('.background-loader').on('load', function(e) {
       $(this).remove()
@@ -65,6 +67,41 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFa
           function() {
             // this.play()
             this.on("ended", $scope.closevideo);
+
+
+            // What follows is a series of ugly hack to avoid conflicts betweens
+            // the app's and the player's fullscreen modes. It might not
+            // always work.
+
+            this.on("fullscreenchange", function() {
+              var player = videojs('videoplayer')
+
+              if (!$scope.view.isFullscreen && player._am_restoreFullscreen) {
+                console.log('Restoring previous app fullscreen')
+                $scope.view.toggleFullscreen()
+              }
+
+              delete player._am_restoreFullscreen
+            });
+
+
+            var children = videojs('videoplayer').children()
+            var component = null
+            for (var i=0, len=children.length; i<len && !component; i++) {
+              component = children[i].fullscreenToggle
+            }
+
+            if (component) {
+              component.on("mouseup", function() {
+                if (!videojs('videoplayer').isFullscreen() && $scope.view.isFullscreen) {
+                  console.log('Exiting app fullscreen before entering player fullscreen')
+                  $scope.view.toggleFullscreen()
+                  setTimeout(function() { videojs('videoplayer')._am_restoreFullscreen = true }, 500)
+                }
+              })
+            }
+
+            // END of ugly hacks
           }
         )
       }
