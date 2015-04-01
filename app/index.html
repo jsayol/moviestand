@@ -3,35 +3,36 @@
 <head>
   <meta charset="utf-8">
   <title>Angular Movies</title>
-  <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">
-  <link rel="stylesheet" href="header/header.css">
-  <link rel="stylesheet" href="header/navbar.css">
-  <link rel="stylesheet" href="list/styles.css">
-  <link rel="stylesheet" href="details/styles.css">
-  <link rel="stylesheet" href="../lib/video-js/video-js.css" />
-  <link rel="stylesheet" href="main/app.css">
 
-  <script src="../bower_components/angular/angular.js"></script>
-  <script src="../bower_components/angular-animate/angular-animate.js"></script>
-  <script src="../bower_components/angular-route/angular-route.js"></script>
-  <script src="../bower_components/jquery/dist/jquery.js"></script>
-  <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="vendor/video-js/video-js.css" />
 
-  <script src="../lib/video-js/video.js"></script>
-  <script src="../lib/videojs-youtube/vjs.youtube.js"></script>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/list.css">
+  <link rel="stylesheet" href="css/details.css">
 
-  <script src="main/app.js"></script>
-  <script src="main/services.js"></script>
-  <script src="main/filters.js"></script>
-  <script src="main/server.js"></script>
-  <script src="header/controllers.js"></script>
-  <script src="list/controllers.js"></script>
-  <script src="details/controllers.js"></script>
+  <script src="vendor/angular/angular.js"></script>
+  <script src="vendor/angular-route/angular-route.js"></script>
+  <script src="vendor/jquery/dist/jquery.js"></script>
+  <script src="vendor/bootstrap/dist/js/bootstrap.js"></script>
+
+  <script src="vendor/videojs/dist/video-js/video.js"></script>
+  <script src="vendor/videojs-youtube/dist/vjs.youtube.js"></script>
+
+  <script src="src/main/app.js"></script>
+  <script src="src/main/services.js"></script>
+  <script src="src/main/filters.js"></script>
+  <script src="src/main/server.js"></script>
+  <script src="src/header/controllers.js"></script>
+  <script src="src/list/controllers.js"></script>
+  <script src="src/details/controllers.js"></script>
 </head>
 <body>
 
   <header ng-controller="HeaderCtrl" ng-dblclick="maximize()">
-    <div class="title">Angular Movies</div>
+    <div class="title">Moviestand</div>
     <ul class="left">
       <li class="glyphicon glyphicon-fullscreen" title="Fullscreen" ng-click="view.toggleFullscreen()"></li>
     </ul>

@@ -16,15 +16,15 @@ moviesApp.config(['$routeProvider', '$compileProvider',
   function($routeProvider, $compileProvider) {
     $routeProvider.
       when('/', {
-        templateUrl: 'list/view.html',
+        templateUrl: 'src/list/view.html',
         controller: 'MovieListCtrl'
       }).
       when('/collection/:category', {
-        templateUrl: 'list/view.html',
+        templateUrl: 'src/list/view.html',
         controller: 'MovieListCtrl'
       }).
       when('/movie/:movieId', {
-        templateUrl: 'details/view.html',
+        templateUrl: 'src/details/view.html',
         controller: 'MovieDetailCtrl'
       }).
       otherwise({
