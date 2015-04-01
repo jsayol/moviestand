@@ -31,6 +31,7 @@
 <body>
 
   <header ng-controller="HeaderCtrl" ng-dblclick="maximize()">
+    <div class="title">Angular Movies</div>
     <ul class="left">
       <li class="glyphicon glyphicon-fullscreen" title="Fullscreen" ng-click="view.toggleFullscreen()"></li>
     </ul>
@@ -92,11 +93,9 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <form class="navbar-form navbar-left" role="search">
-            <div class="input-group">
+            <div class="form-group has-feedback">
               <input ng-model="filter.query" type="text" class="form-control searchbox" placeholder="Search">
-              <div class="input-group-btn">
-                <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
-              </div>
+              <i class="glyphicon glyphicon-search form-control-feedback"></i>
             </div>
           </form>
           <div class="btn-group navbar-form navbar-left viewbuttons" data-toggle="buttons">

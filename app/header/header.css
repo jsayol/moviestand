@@ -60,3 +60,14 @@ header > ul > li:focus {
   cursor: pointer;
   color: rgb(79, 126, 171);
 }
+
+header .title {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9em;
+  font-weight: 600;
+}

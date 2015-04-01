@@ -130,7 +130,7 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFa
         'videoplayer',
         {
           techOrder: ["youtube"],
-          ytcontrols: false,
+          ytcontrols: true,
           controls: true,
           autoplay: "autoplay",
           preload: "auto",
