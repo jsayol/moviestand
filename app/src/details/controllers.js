@@ -13,7 +13,6 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFa
       .flatten()
       .find({hash: $scope.movieHash})
       .value()
-    // $scope.movie = DBFactory.movies.find({hash: $routeParams.movieHash})
     $scope.movieInfo = DBFactory.tmdb.find({id: $scope.movie.tmdbid})
     $scope.view = MoviesView
 

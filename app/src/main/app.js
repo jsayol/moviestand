@@ -16,10 +16,10 @@ var moviesApp = angular.module('myApp', [
 moviesApp.config(['$routeProvider', '$compileProvider',
   function($routeProvider, $compileProvider) {
     $routeProvider.
-      when('/', {
-        templateUrl: 'src/list/view.html',
-        controller: 'MovieListCtrl'
-      }).
+      // when('/', {
+      //   templateUrl: 'src/list/view.html',
+      //   controller: 'MovieListCtrl'
+      // }).
       when('/collection/:collection', {
         templateUrl: 'src/list/view.html',
         controller: 'MovieListCtrl'
@@ -28,8 +28,12 @@ moviesApp.config(['$routeProvider', '$compileProvider',
         templateUrl: 'src/details/view.html',
         controller: 'MovieDetailCtrl'
       }).
+      when('/settings', {
+        templateUrl: 'src/settings/view.html',
+        controller: 'SettingsCtrl'
+      }).
       otherwise({
-        redirectTo: '/'
+        redirectTo: '/settings'
       })
 
     // $compileProvider.imgSrcSanitizationWhitelist('app://')
