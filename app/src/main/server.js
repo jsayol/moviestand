@@ -1,4 +1,4 @@
-moviesServices.factory('HTTPStreamerFactory', [
+moviesServices.factory('StreamingFactory', [
   function() {
     var http = require('http')
     var fs = require('fs')
@@ -6,15 +6,17 @@ moviesServices.factory('HTTPStreamerFactory', [
     var files = []
 
     var host = '127.0.0.1'
-    var port = 1337
+    var minPort = 30000
+    var maxPort = 59999
+    var port = null
 
-    http.createServer(function (req, res) {
+    var server = http.createServer(function (req, res) {
       try {
         var file = files[req.url.substr(1)]
         var stat = fs.statSync(file)
         var ext = path.extname(file)
 
-        if (['.mp3', '.avi', '.mp4', '.mkv', '.flv', '.ogv', '.ogg'].indexOf(ext) >= 0) {
+        if (['.mp3', '.avi', '.mp4', '.mkv', '.flv', '.ogv', '.ogg'].indexOf(ext) > -1) {
           var type
           switch (ext) {
             case '.mp3':
@@ -68,16 +70,43 @@ moviesServices.factory('HTTPStreamerFactory', [
           console.log('Streaming file: '+file)
         }
         else {
+          // TODO: return properly formated error
           res.end('Looks like this file cannot be played.')
         }
       } catch (e) {
+        // TODO: return properly formated error
         res.end('File doesn\'t exists... Or some other error.')
       }
-    }).listen(port, host)
+    })
+
+    var triesLeft = 20
+
+    var serverListen = function() {
+      if (triesLeft--) {
+        var reqPort = Math.floor(Math.random()*(maxPort - minPort) + minPort)
+        server.listen(reqPort, host, function() {
+          port = reqPort
+          console.log('Streaming server listening on http://'+host+':'+port+'/')
+        })
+      }
+    }
+
+    server.on('error', function(err) {
+      if (err.code === 'EADDRINUSE') {
+        serverListen()
+      }
+    })
+
+    server.on('close', function() {
+      if (port)
+        console.log('Closing streaming server on http://'+host+':'+port+'/')
+    })
+
+    serverListen()
 
     return {
       getURL: function(pos) {
-        return 'http://'+host+':'+port+'/' + (typeof pos != 'undefined' ? pos : '')
+        return 'http://'+host+':'+port+'/' + (typeof pos !== 'undefined' ? pos : '')
       },
       addFile: function(file) {
         var pos = $.inArray(files, file)

@@ -234,7 +234,7 @@ moviesServices.factory('FilesFactory', [
 
     var _FOLDER = '/media/josep/Data/Videos/Movies'
     // var _FOLDER = '/media/josep/SeagateBackup/Videos/Movies'
-    var _VALID_EXT = ['.mp4', '.mkv', '.avi']
+    var _VALID_EXT = ['.avi', '.mp4', '.mkv', '.flv', '.ogv', '.ogg']
     var _RECURSIVE = true
 
     var walk = function(dir, validExt, recursive, done) {

@@ -1,4 +1,6 @@
 module.exports = function(grunt) {
+  "use strict"
+
   var hostPlatform = {
   	windows: process.platform === 'win32',
   	linux: process.platform === 'linux',
@@ -27,8 +29,8 @@ module.exports = function(grunt) {
       options: {
         version: '0.12.0',
         buildDir: '<%= dirs.build %>',
-        platforms: ['osx64']
-        // platforms: ['linux32', 'linux64', 'win32', 'win64', 'osx32', 'osx64'] // These are the platforms that we want to build
+        // platforms: ['win64']
+        platforms: ['linux32', 'linux64', 'win32', 'win64', 'osx32', 'osx64'] // These are the platforms that we want to build
       },
       src: [
         // Include

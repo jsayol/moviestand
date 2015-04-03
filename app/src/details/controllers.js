@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFactory', 'HTTPStreamerFactory', 'MoviesView', '$timeout',
-  function($scope, $routeParams, DBFactory, HTTPStreamerFactory, MoviesView, $timeout) {
+moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFactory', 'StreamingFactory', 'MoviesView', '$timeout',
+  function($scope, $routeParams, DBFactory, StreamingFactory, MoviesView, $timeout) {
     var gui = require('nw.gui')
     var win = gui.Window.get()
 
@@ -43,11 +43,10 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFa
 
     $scope.play = function(internally) {
       if (internally) {
-        var stream = HTTPStreamerFactory.addFile($scope.movie.path)
         var video = $('<video />')
           .attr({
             id:"videoplayer",
-            src: stream,
+            src: StreamingFactory.addFile($scope.movie.path),
             controls: true,
             autoplay: "autoplay",
             preload: "auto",
@@ -66,7 +65,7 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFa
           },
           function() {
             // this.play()
-            this.on("ended", $scope.closevideo);
+            this.on("ended", $scope.closevideo)
 
 
             // What follows is a series of ugly hack to avoid conflicts betweens
@@ -130,7 +129,7 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFa
         'videoplayer',
         {
           techOrder: ["youtube"],
-          ytcontrols: true,
+          ytcontrols: false,
           controls: true,
           autoplay: "autoplay",
           preload: "auto",
