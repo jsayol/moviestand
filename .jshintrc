@@ -1,0 +1,12 @@
+{
+  "node":      true,
+  "strict":    true,
+  "undef":     true,
+  "unused":    true,
+  "lastsemic": false,
+  "asi":       true,
+  "curly":     true,
+  "eqeqeq":    true,
+  "latedef":   true,
+  "noarg":     true
+}
