@@ -3,39 +3,50 @@
 /* Controllers */
 
 moviesControllers.controller('MovieListCtrl',
-  ['$scope', 'DBFactory', 'MoviesView', 'FilesFactory', 'TMDBApiFactory', 'FilterFactory', '$location',
-  function($scope, DBFactory, MoviesView, FilesFactory, TMDBApiFactory, FilterFactory, $location) {
-    $scope.movies = DBFactory.movies.value()
-    $scope.orderProp = 'fileName'
+  ['$scope', '$timeout', '$routeParams', '_', 'MoviesView', 'FilterFactory', 'CollectionsFactory', '$location',
+  function($scope, $timeout, $routeParams, _, MoviesView, FilterFactory, CollectionsFactory, $location) {
+    $scope.movies = []
+    $scope.orderProp = 'filename'
     $scope.view = MoviesView
     $scope.filter = FilterFactory
+    $scope.collectionName = $routeParams.collection
 
     $scope.currentPage = 0
     $scope.pageSize = 10
 
-    $scope.numberOfPages = function(){
-        return Math.ceil($scope.movies.length/$scope.pageSize);
+    if ($scope.collectionName) {
+      $scope.collection = CollectionsFactory.db.find({name: $scope.collectionName})
+    }
+    else {
+      var collections = CollectionsFactory.query()
+      if (collections && collections[0]) {
+        $location.path('/collection/'+collections[0].name)
+      }
     }
 
-    FilesFactory.getFiles(function(files) {
-      console.log('Got '+files.length+' files')
-      var db = DBFactory.movies
-      var current = db.pluck('path');
-      files.forEach(function (f) {
-        var pos = $.inArray(f.path, current)
-        if (pos < 0) {
-          db.push(f)
-          console.log('New movie detected: '+f.fileName)
+    if ($scope.collection) {
+      CollectionsFactory.getFiles($scope.collection, function(files, init) {
+        $('.list-container').css('visibility', 'hidden')
+        $scope.movies = files
+        if (init) {
+          $scope.$apply()
+        }
+
+        if ($scope.view.scrollPos[$scope.collectionName]) {
+          $timeout(function() {
+            document.getElementById('view-frame').scrollTop = $scope.view.scrollPos[$scope.collectionName]
+            $('.list-container').css('visibility', 'visible')
+          }, 0)
         }
         else {
-          delete current[pos]
+          $('.list-container').css('visibility', 'visible')
         }
       })
-      console.log('Finished processing files')
-      $scope.$apply()
+    }
 
-      TMDBApiFactory.checkAll(function() { $scope.$apply() })
-    })
+    $scope.$on("$destroy", function(){
+      $scope.view.scrollPos[$scope.collectionName] = document.getElementById('view-frame').scrollTop
+    });
 
     $scope.countries = function(movie) {
       return movie.production_countries
@@ -55,7 +66,7 @@ moviesControllers.controller('MovieListCtrl',
     }
 
     $scope.info = function(movie) {
-      $location.path('/movie/'+movie.fileName)
+      $location.path('/movie/'+movie.filename)
     }
   }
 ])

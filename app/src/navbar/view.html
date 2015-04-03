@@ -1,0 +1,66 @@
+<nav ng-controller="NavbarCtrl" class="navbar navbar-default navbar-sm navbar-fixed-top" ng-dblclick="maximize()">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+    <!-- <div id="navbar"> -->
+      <div class="glyphicon glyphicon-fullscreen fullscreentoggle" title="Fullscreen" ng-click="view.toggleFullscreen()"></div>
+      <ul class="nav navbar-nav">
+        <li ng-repeat="collection in collections" ng-class="{active: selected('/collection/'+collection.name)}"><a ng-href="#/collection/{{collection.name}}">{{collection.name}} <span class="badge">{{countFiles(collection)}}</span></a></li>
+
+        <li class="dropdown" ng-if="currCollectionName">
+          <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Genre <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li ng-class="{active: !filter.genre}"><a href="" ng-click="filter.genre=null">All</a></li>
+            <li class="divider"></li>
+            <!-- <li class="dropdown-header">Nav header</li> -->
+            <li ng-repeat="genre in getGenres() | orderBy:'name' track by genre.id" ng-class="{active: genre.id==filter.genre}">
+              <a href="" ng-click="filter.genre=genre.id">
+                <span class="countbybadge"><span class="badge">{{genre.count}}</span></span> {{genre.name}}
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="dropdown" ng-if="currCollectionName">
+          <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Country <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li ng-class="{active: !filter.country}"><a href="" ng-click="filter.country=null">All</a></li>
+            <li class="divider"></li>
+            <!-- <li class="dropdown-header">Nav header</li> -->
+            <li ng-repeat="country in getCountries() | orderBy:'name' track by country.iso_3166_1" ng-class="{active: country.iso_3166_1==filter.country}">
+              <a href="" ng-click="filter.country=country.iso_3166_1">
+                <span class="countbybadge"><span class="badge">{{country.count}}</span></span> {{country.name}}
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <form class="navbar-form navbar-left" role="search" ng-if="currCollectionName">
+          <div class="form-group has-feedback">
+            <input ng-model="filter.query" type="text" class="form-control searchbox" placeholder="Search">
+            <i class="glyphicon glyphicon-search form-control-feedback"></i>
+          </div>
+        </form>
+        <div class="btn-group navbar-form navbar-left viewbuttons" data-toggle="buttons" ng-if="currCollectionName">
+          <label class="btn btn-default glyphicon glyphicon-th" ng-class="{active: view.mode=='grid'}" title="Grid" ng-click="view.mode='grid'">
+            <input type="radio" name="viewMode" value="grid">
+          </label>
+          <label class="btn btn-default glyphicon glyphicon-th-list" ng-class="{active: view.mode=='list'}" title="List" ng-click="view.mode='list'">
+            <input type="radio" name="viewMode" value="list">
+          </label>
+        </div>
+        <li ng-class="{active: selected('/settings')}"><a href="#/settings">Settings</a></li>
+        <!-- <li class="active"><a href="./">Fixed top <span class="sr-only">(current)</span></a></li> -->
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div>
+</nav>

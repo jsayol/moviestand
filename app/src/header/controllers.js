@@ -44,38 +44,3 @@ headerControllers.controller('HeaderCtrl', ['$scope', 'MoviesView',
     }
   }
 ])
-
-headerControllers.controller('NavbarCtrl', ['$scope', '$location', 'FilterFactory', 'DBFactory', 'MoviesView',
-  function($scope, $location, FilterFactory, DBFactory, MoviesView) {
-    $scope.location = $location
-    $scope.filter = FilterFactory
-    $scope.view = MoviesView
-
-    // We add this to monitor changes to these specific filters
-    $scope.filterGenre = FilterFactory.genre
-    $scope.filterCountry = FilterFactory.country
-
-    $scope.selected = function(route) {
-      return $scope.location.path() == route
-    }
-
-    $scope.countBy = function(what, key, id) {
-      return DBFactory.movies
-        .chain()
-        .pluck(what)
-        .flatten()
-        .compact()
-        .filter(function(e){ return id==e[key] })
-        .value()
-        .length
-    }
-
-    $scope.countByGenre = function(id) {
-      return $scope.countBy('genres', 'id', id)
-    }
-
-    $scope.countByCountry = function(id) {
-      return $scope.countBy('production_countries', 'iso_3166_1', id)
-    }
-  }
-])

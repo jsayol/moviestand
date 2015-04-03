@@ -35,8 +35,14 @@
 	// Globals
 	"globals": {
 		// App
+    "angular"           : true,
+    "moviesApp"         : true,
+    "headerControllers" : true,
+    "navbarControllers" : true,
+    "moviesControllers" : true,
+    "moviesServices"    : true,
 
-		// Third party
+		// Vendor
 		"videojs": true
 	}
 }

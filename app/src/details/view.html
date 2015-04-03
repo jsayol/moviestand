@@ -1,9 +1,9 @@
 <div class="details-container">
   <!-- <div class="close glyphicon glyphicon-remove" ng-click="goback()"></div> -->
 
-  <img class="background-loader" ng-src="http://image.tmdb.org/t/p/w780{{movieInfo.backdrop_path}}"></img>
+  <img class="background-loader" ng-src="http://image.tmdb.org/t/p/w780{{movieInfo.backdrop_path}}" data-hash="{{movieHash}}"></img>
 
-  <div class="backdrop"></div>
+  <div class="backdrop" id="backdrop-{{movieHash}}"></div>
 
   <div class="content">
     <div class="left">

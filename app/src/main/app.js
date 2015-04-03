@@ -4,6 +4,7 @@
 var moviesApp = angular.module('myApp', [
   'ngRoute',
   'headerControllers',
+  'navbarControllers',
   'moviesControllers',
   'moviesServices'
 ])
@@ -19,11 +20,11 @@ moviesApp.config(['$routeProvider', '$compileProvider',
         templateUrl: 'src/list/view.html',
         controller: 'MovieListCtrl'
       }).
-      when('/collection/:category', {
+      when('/collection/:collection', {
         templateUrl: 'src/list/view.html',
         controller: 'MovieListCtrl'
       }).
-      when('/movie/:movieId', {
+      when('/movie/:movieHash', {
         templateUrl: 'src/details/view.html',
         controller: 'MovieDetailCtrl'
       }).

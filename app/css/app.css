@@ -13,7 +13,8 @@ html {
 }
 
 body {
-  background: rgba(0,0,0,0);
+  /*background: rgba(0,0,0,0);*/
+  background: rgb(23, 24, 27);
   cursor: default;
   -webkit-user-select: none;
 }
@@ -34,7 +35,7 @@ body.fullscreen div.view-container {
   top: 35px;
 }
 
-.view-frame {
+#view-frame {
   overflow: auto;
   height: 100%;
 

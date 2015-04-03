@@ -2,18 +2,25 @@
 
 /* Controllers */
 
-moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFactory', 'StreamingFactory', 'MoviesView', '$timeout',
-  function($scope, $routeParams, DBFactory, StreamingFactory, MoviesView, $timeout) {
-    var gui = require('nw.gui')
-    var win = gui.Window.get()
-
-    $scope.movie = DBFactory.movies.find({fileName: $routeParams.movieId})
+moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFactory', 'CollectionsFactory', 'StreamingFactory', 'MoviesView', '$timeout',
+  function($scope, $routeParams, DBFactory, CollectionsFactory, StreamingFactory, MoviesView, $timeout) {
+    $scope.movieHash = $routeParams.movieHash
+    $scope.movie = CollectionsFactory.db
+      .chain()
+      .pluck('folders')
+      .flatten()
+      .pluck('files')
+      .flatten()
+      .find({hash: $scope.movieHash})
+      .value()
+    // $scope.movie = DBFactory.movies.find({hash: $routeParams.movieHash})
     $scope.movieInfo = DBFactory.tmdb.find({id: $scope.movie.tmdbid})
     $scope.view = MoviesView
 
     $('.background-loader').on('load', function(e) {
-      $(this).remove()
-      $('.backdrop')
+      var self = $(this)
+      self.remove()
+      $('#backdrop-'+self.attr('data-hash'))
         .css('background-image', 'url('+this.src+')')
         .addClass('loaded')
     })
@@ -105,7 +112,7 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFa
         )
       }
       else {
-        gui.Shell.openItem($scope.movie.path)
+        $scope.view.gui.Shell.openItem($scope.movie.path)
       }
     }
 
@@ -151,11 +158,11 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFa
     }
 
     $scope.gotoimdb = function() {
-      gui.Shell.openExternal('http://www.imdb.com/title/' + $scope.movieInfo.imdb_id)
+      $scope.view.gui.Shell.openExternal('http://www.imdb.com/title/' + $scope.movieInfo.imdb_id)
     }
 
     $scope.open = function() {
-      gui.Shell.showItemInFolder($scope.movie.path)
+      $scope.view.gui.Shell.showItemInFolder($scope.movie.path)
     }
   }
 ])
