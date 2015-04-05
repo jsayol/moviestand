@@ -21,10 +21,12 @@ headerControllers.controller('HeaderCtrl', ['$scope', 'MoviesView',
     }
 
     $scope.maximize = function() {
-      if ($scope.view.isMaximized)
+      if ($scope.view.isMaximized) {
         $scope.view.win.unmaximize()
-      else
+      }
+      else {
         $scope.view.win.maximize()
+      }
     }
 
     $scope.showDevTools = function() {

@@ -1,13 +1,13 @@
 var navbarControllers = angular.module('navbarControllers', [])
 
-headerControllers.controller('NavbarCtrl', ['$scope', '$rootScope', '$location', 'FilterFactory', 'DBFactory', 'CollectionsFactory', 'MoviesView',
-  function($scope, $rootScope, $location, FilterFactory, DBFactory, CollectionsFactory, MoviesView) {
+headerControllers.controller('NavbarCtrl', ['$scope', '$rootScope', '$state', '$location', 'FilterFactory', 'DBFactory', 'CollectionsFactory', 'MoviesView',
+  function($scope, $rootScope, $state, $location, FilterFactory, DBFactory, CollectionsFactory, MoviesView) {
     $scope.location = $location
     $scope.filter = FilterFactory
     $scope.view = MoviesView
     $scope.collections = CollectionsFactory.query()
     $scope.currCollection = null
-    $scope.currCollectionName = null
+    $scope.currCollectionId = null
 
     // We add this to monitor changes to these specific filters
     $scope.filterGenre = FilterFactory.genre
@@ -16,11 +16,11 @@ headerControllers.controller('NavbarCtrl', ['$scope', '$rootScope', '$location',
     var detectCurrCollection = function() {
       var match = $scope.location.path().match(/\/collection\/(.+)/)
       if (match) {
-        $scope.currCollectionName = match[1]
-        $scope.currCollection = CollectionsFactory.db.find({name: $scope.currCollectionName})
+        $scope.currCollectionId = match[1]
+        $scope.currCollection = CollectionsFactory.db.find({id: $scope.currCollectionId})
       }
       else {
-        $scope.currCollectionName = null
+        $scope.currCollectionId = null
         $scope.currCollection = null
       }
     }
@@ -29,22 +29,22 @@ headerControllers.controller('NavbarCtrl', ['$scope', '$rootScope', '$location',
 
     $rootScope.$on('$locationChangeSuccess', detectCurrCollection)
 
+    $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams) {
+      if($state.is('settings') && toParams && toParams.defaultChild) {
+        $state.go(toParams.defaultChild)
+      }
+    })
+
     $scope.countFiles = function(collection) {
       return CollectionsFactory.countFiles(collection || $scope.currCollection)
     }
 
-    $scope.selected = function(route) {
-      return $scope.location.path() === route
-    }
-
     $scope.getGenres = function() {
       return CollectionsFactory.getGenres($scope.currCollection)
-      // return []
     }
 
     $scope.getCountries = function() {
       return CollectionsFactory.getCountries($scope.currCollection)
-      // return []
     }
   }
 ])

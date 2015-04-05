@@ -22,7 +22,7 @@
         </ul>
 
         <div class="poster">
-          <a href="#/movie/{{movie.hash}}">
+          <a ui-sref="movie({movieHash: movie.hash})">
             <img ng-if="movie.poster_path" ng-src="http://image.tmdb.org/t/p/w130{{movie.poster_path}}">
             <img ng-if="!movie.poster_path" ng-src="img/poster-placeholder.png">
           </a>

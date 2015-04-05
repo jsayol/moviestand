@@ -1,7 +1,8 @@
-moviesServices.factory('TMDBApiFactory', ['DBFactory',
-  function(DBFactory) {
+moviesServices.factory('TMDBApiFactory', ['DBFactory', '_',
+  function(DBFactory, _) {
     var api = require('moviedb')('306b27f6d4bfe68442cd66152d01a134')
     var fs = require('fs')
+    var path = require('path')
     var async = require('async')
 
     var queue = async.priorityQueue(function(task, callback) {
@@ -27,7 +28,7 @@ moviesServices.factory('TMDBApiFactory', ['DBFactory',
         )
       },
 
-      getID: function(movie, intermediateSave, callback) {
+      getID: function(movie, callback) {
         var match = movie.filename.match(/^(.+)\s*\(((19|20)[0-9][0-9])\)\.([a-zA-Z0-9_]+)$/)
         if (match) {
           var request = {
@@ -48,17 +49,17 @@ moviesServices.factory('TMDBApiFactory', ['DBFactory',
               movie.tmdbid = 'ERR_NOTFOUND'
               callback('ERR_NOTFOUND', movie)
             }
-            intermediateSave()
+            DBFactory.collectionsSave()
           })
         }
         else {
           movie.tmdbid = 'ERR_FILENAME'
-          intermediateSave()
+          DBFactory.collectionsSave()
           callback('ERR_FILENAME', movie)
         }
       },
 
-      updateInfo: function(movie, intermediateSave, callback) {
+      updateInfo: function(movie, callback) {
         var request = {
           id: movie.tmdbid,
           append_to_response: 'trailers'
@@ -76,16 +77,16 @@ moviesServices.factory('TMDBApiFactory', ['DBFactory',
           }
           else {
             movie.tmdbid = 'ERR_NOTFOUND'
-            intermediateSave()
+            DBFactory.collectionsSave()
             callback('ERR_NOTFOUND', movie, null)
           }
         })
       },
 
-      checkUpdateInfo: function(movie, intermediateSave, callback) {
+      checkUpdateInfo: function(movie, callback) {
         if (!tmdbByID[movie.tmdbid]) {
           console.log('Movie "'+movie.filename+'" has id('+movie.tmdbid+') but no info. Requesting...')
-          this.updateInfo(movie, intermediateSave, function(err, m, info) {
+          this.updateInfo(movie, function(err, m, info) {
             if (err) {
               console.log('Movie "'+movie.filename+'" with id('+movie.tmdbid+') error getting info.')
               console.log(err)
@@ -100,7 +101,7 @@ moviesServices.factory('TMDBApiFactory', ['DBFactory',
               movie.genres = info.genres
               movie.runtime = info.runtime
               movie.production_countries = info.production_countries
-              intermediateSave()
+              DBFactory.collectionsSave()
             }
             callback()
           })
@@ -119,7 +120,7 @@ moviesServices.factory('TMDBApiFactory', ['DBFactory',
         }
       },
 
-      check : function(movie, intermediateSave, callback) {
+      check : function(movie, collection, callback, cbRemove) {
         var self = this
 
         try {
@@ -134,43 +135,59 @@ moviesServices.factory('TMDBApiFactory', ['DBFactory',
                 console.log('Movie "'+movie.filename+'" had a previous error('+movie.tmdbid+').')
               }
               else {
-                self.checkUpdateInfo(movie, intermediateSave, callback)
+                self.checkUpdateInfo(movie, callback)
               }
             }
             else {
               console.log('Movie "'+movie.filename+'" has no id. Requesting...')
-              self.getID(movie, intermediateSave, function(err, m) {
+              self.getID(movie, function(err, m) {
                 if (err) {
                   console.log('Movie "'+movie.filename+'" error getting id.')
                   console.log(err)
                 }
                 else {
                   console.log('Movie "'+m.filename+'" got id('+m.tmdbid+').')
-                  self.checkUpdateInfo(m, intermediateSave, callback)
+                  self.checkUpdateInfo(m, callback)
                 }
               })
             }
           }
           else {
             // TODO: "file" exists but it's not a file. Treat this as if it didn't exist
+            cbRemove(movie)
           }
         }
         catch (e) {
           // TODO: Detect if the folder is not present (might be a removable drive)
-
-          // console.log('Movie "'+movie.path+'" no longer exists. Removing from DB.')
-          // DBFactory.movies.remove({path: movie.path})
-          // callback()
+          cbRemove(movie)
         }
       },
 
-      checkAll: function(collection, intermediateSave, callback) {
+      checkAll: function(collection, callback) {
         console.log('Checking all files in the DB...')
         var self = this
-        collection.folders[0].files.forEach(function(movie) {
-          self.check(movie, intermediateSave, callback)
+        var folder = collection.folders[0]
+        var folderLen = (folder.path + path.sep).length
+        var toRemove = []
+
+        folder.files.forEach(function(movie) {
+          if (movie.path.substr(0, folderLen) !== (folder.path + path.sep)) {
+            console.log('Movie '+movie.path+' doesn\'t belong to this category. Removing from DB.')
+            toRemove.push(movie.hash)
+          }
+          else {
+            self.check(movie, collection, callback, function(m) {
+              console.log('Movie "'+movie.path+'" no longer exists. Removing from DB.')
+              toRemove.push(movie.hash)
+            })
+          }
         })
-        intermediateSave()
+
+        toRemove.forEach(function(h) {
+          _.remove(collection.folders[0].files, {hash: h})
+        })
+
+        DBFactory.collectionsSave()
         callback()
       }
     }
@@ -223,15 +240,17 @@ moviesServices.factory('FilesFactory', [
         // var folder = collection.folders[0]
         walk(folder.path, folder.recursive, extensions, function(err, results) {
           if (err) {
-            throw err
+            // TODO: Folder doesn't exist?
           }
-          var files = results.map(function(f) {
-            return {
-              'path': f,
-              'filename': path.basename(f)
-            }
-          })
-          callback(files.sort(function(a,b) { a.filename>b.filename ? 1 : -1 }))
+          else {
+            var files = results.map(function(f) {
+              return {
+                'path': f,
+                'filename': path.basename(f)
+              }
+            })
+            callback(files.sort(function(a,b) { a.filename>b.filename ? 1 : -1 }))
+          }
         })
       }
     }

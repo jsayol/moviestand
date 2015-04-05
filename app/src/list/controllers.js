@@ -3,50 +3,52 @@
 /* Controllers */
 
 moviesControllers.controller('MovieListCtrl',
-  ['$scope', '$timeout', '$routeParams', '_', 'MoviesView', 'FilterFactory', 'CollectionsFactory', '$location',
-  function($scope, $timeout, $routeParams, _, MoviesView, FilterFactory, CollectionsFactory, $location) {
+  ['$scope', '$timeout', '$state', '$stateParams', '_', 'MoviesView', 'FilterFactory', 'CollectionsFactory',
+  function($scope, $timeout, $state, $stateParams, _, MoviesView, FilterFactory, CollectionsFactory) {
     $scope.movies = []
     $scope.orderProp = 'filename'
     $scope.view = MoviesView
     $scope.filter = FilterFactory
-    $scope.collectionName = $routeParams.collection
+    $scope.collectionId = $stateParams.id
 
     $scope.currentPage = 0
     $scope.pageSize = 10
 
-    if ($scope.collectionName) {
-      $scope.collection = CollectionsFactory.db.find({name: $scope.collectionName})
+    if ($scope.collectionId) {
+      $scope.collection = CollectionsFactory.db.find({id: $scope.collectionId})
     }
     else {
       var collections = CollectionsFactory.query()
       if (collections && collections[0]) {
-        $location.path('/collection/'+collections[0].name)
+        $state.go('collection', {id: collections[0].id})
       }
     }
 
     if ($scope.collection) {
       CollectionsFactory.getFiles($scope.collection, function(files, init) {
-        $('.list-container').css('visibility', 'hidden')
+        // $('.list-container').css('visibility', 'hidden')
         $scope.movies = files
         if (init) {
           $scope.$apply()
         }
 
-        if ($scope.view.scrollPos[$scope.collectionName]) {
-          $timeout(function() {
-            document.getElementById('view-frame').scrollTop = $scope.view.scrollPos[$scope.collectionName]
-            $('.list-container').css('visibility', 'visible')
-          }, 0)
-        }
-        else {
-          $('.list-container').css('visibility', 'visible')
-        }
+        // if ($scope.view.scrollPos[$scope.collectionId]) {
+        //   $timeout(function() {
+        //     document.getElementById('view-frame').scrollTop = $scope.view.scrollPos[$scope.collectionId]
+        //     $('.list-container').css('visibility', 'visible')
+        //   }, 0)
+        // }
+        // else {
+        //   $('.list-container').css('visibility', 'visible')
+        // }
+      }, function() {
+        $scope.$apply()
       })
     }
 
-    $scope.$on("$destroy", function(){
-      $scope.view.scrollPos[$scope.collectionName] = document.getElementById('view-frame').scrollTop
-    });
+    // $scope.$on("$destroy", function(){
+    //   $scope.view.scrollPos[$scope.collectionId] = document.getElementById('view-frame').scrollTop
+    // });
 
     $scope.countries = function(movie) {
       return movie.production_countries
@@ -62,11 +64,11 @@ moviesControllers.controller('MovieListCtrl',
 
     $scope.play = function(movie) {
       console.log(movie.path)
-      gui.Shell.openItem(movie.path)
+      $scope.view.gui.Shell.openItem(movie.path)
     }
 
     $scope.info = function(movie) {
-      $location.path('/movie/'+movie.filename)
+      $state.go('movie', {movieHash: movie.filename})
     }
   }
 ])

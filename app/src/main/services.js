@@ -58,9 +58,7 @@ moviesServices.factory('DBFactory', ['LowDBFactory',
 
     return {
       collections: collectionsDB('collections'),
-      // movies: moviesDB('movies'),
       tmdb: tmdbDB('tmdb'),
-      // moviesSave: moviesDB.save,
       tmdbSave: tmdbDB.save,
       collectionsSave: collectionsDB.save
     }
@@ -71,8 +69,9 @@ moviesServices.factory('CollectionsFactory', ['DBFactory', 'FilesFactory', 'TMDB
   function(DBFactory, FilesFactory, TMDBApiFactory, _) {
     var fs = require('fs')
     var initialized = {}
+    var crypto = require('crypto')
 
-    var initFiles = function(self, collection, callback) {
+    var initFiles = function(collection, cbSave, cbInit, cbUpdate) {
       var folder = collection.folders[0]
       FilesFactory.getFiles(folder, collection.extensions, function(files) {
         console.log('Got '+files.length+' files')
@@ -85,11 +84,7 @@ moviesServices.factory('CollectionsFactory', ['DBFactory', 'FilesFactory', 'TMDB
           var pos = current.indexOf(f.path)
           if (pos < 0) {
             console.log('New movie detected: '+f.path)
-
-            var shasum = crypto.createHash('sha1')
-            shasum.update(f.path)
-            f.hash = shasum.digest('hex')
-
+            f.hash = crypto.randomBytes(20).toString('hex')
             folder.files.push(f)
             newFiles = true
           }
@@ -100,18 +95,18 @@ moviesServices.factory('CollectionsFactory', ['DBFactory', 'FilesFactory', 'TMDB
         })
 
         if (newFiles) {
-          self.save()
+          cbSave()
         }
 
         initialized[collection.name] = folder.files
-        callback(initialized[collection.name], true)
+        cbInit(initialized[collection.name], true)
 
         console.log('Finished processing files')
         // $scope.$apply()
 
-        TMDBApiFactory.checkAll(collection, self.save, function() {
-          self.save()
-          // $scope.$apply()
+        TMDBApiFactory.checkAll(collection, function() {
+          cbSave()
+          cbUpdate()
         })
       })
     }
@@ -149,12 +144,12 @@ moviesServices.factory('CollectionsFactory', ['DBFactory', 'FilesFactory', 'TMDB
         }
       },
 
-      getFiles: function(collection, callback) {
+      getFiles: function(collection, cbInit, cbUpdate) {
         if (initialized[collection.name]) {
-          callback(initialized[collection.name], false)
+          cbInit(initialized[collection.name], false)
         }
         else {
-          initFiles(this, collection, callback)
+          initFiles(collection, this.save, cbInit, cbUpdate)
         }
       },
 
@@ -203,6 +198,54 @@ moviesServices.factory('CollectionsFactory', ['DBFactory', 'FilesFactory', 'TMDB
           .clone()
           .forEach(function(g) { g.count = count[g.iso_3166_1] })
           .value()
+      },
+
+      sanitation: function(collection) {
+        if (typeof collection.id !== 'string') {
+          collection.id = crypto.randomBytes(20).toString('hex')
+        }
+
+        if (typeof collection.name !== 'string') {
+          collection.name = 'Collection'
+        }
+
+        if (typeof collection.type !== 'string') {
+          collection.type = 'movies'
+        }
+
+        if (!Array.isArray(collection.extensions)) {
+          collection.extensions = ['']
+        }
+
+        if (!Array.isArray(collection.folders)) {
+          collection.folders = [{}]
+        }
+
+        if (typeof collection.folders[0].path !== 'string') {
+          collection.folders[0].path = ''
+        }
+
+        if (typeof collection.folders[0].recursive !== 'boolean') {
+          collection.folders[0].recursive = false
+        }
+
+        if (!Array.isArray(collection.folders[0].files)) {
+          collection.folders[0].files = []
+        }
+
+        return collection
+      },
+
+      createNew: function(collection) {
+        if (typeof collection !== 'object') {
+          collection = {name : 'New collection'}
+        }
+        this.db.push(this.sanitation(collection))
+        return collection
+      },
+
+      removeCollection: function(collection) {
+        this.db.remove({id: collection.id})
       }
     }
   }

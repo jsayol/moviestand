@@ -1,0 +1,11 @@
+<div class="settings-container">
+
+  <nav class="menu">
+    <ul class="list">
+      <li ng-repeat="entry in entries" class="item" ng-class="{disabled: entry.disabled}" ui-sref-active="active" ui-sref="{{entry.state}}" title="{{entry.disabled ? entry.name+' coming soon...' : ''}}"><span class="glyphicon" ng-class="'glyphicon-'+entry.icon"></span> {{entry.name}}</li>
+    </ul>
+  </nav>
+
+  <div class="content" ui-view></div>
+
+</div>

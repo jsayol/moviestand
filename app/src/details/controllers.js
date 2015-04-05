@@ -2,9 +2,9 @@
 
 /* Controllers */
 
-moviesControllers.controller('MovieDetailCtrl', ['$scope', '$routeParams', 'DBFactory', 'CollectionsFactory', 'StreamingFactory', 'MoviesView', '$timeout',
-  function($scope, $routeParams, DBFactory, CollectionsFactory, StreamingFactory, MoviesView, $timeout) {
-    $scope.movieHash = $routeParams.movieHash
+moviesControllers.controller('MovieDetailCtrl', ['$scope', '$stateParams', 'DBFactory', 'CollectionsFactory', 'StreamingFactory', 'MoviesView', '$timeout',
+  function($scope, $stateParams, DBFactory, CollectionsFactory, StreamingFactory, MoviesView, $timeout) {
+    $scope.movieHash = $stateParams.movieHash
     $scope.movie = CollectionsFactory.db
       .chain()
       .pluck('folders')
