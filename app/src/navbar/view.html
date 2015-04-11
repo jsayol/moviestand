@@ -14,7 +14,7 @@
       <ul class="nav navbar-nav">
         <li ng-repeat="collection in collections" ui-sref-active="active"><a ui-sref="collection({id: collection.id})">{{collection.name}} <span class="badge">{{countFiles(collection)}}</span></a></li>
 
-        <li class="dropdown" ng-if="currCollectionId">
+        <li class="dropdown" ng-if="$state.is('collection') && currCollection">
           <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Genre <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <li ng-class="{active: !filter.genre}"><a href="" ng-click="filter.genre=null">All</a></li>
@@ -28,7 +28,7 @@
           </ul>
         </li>
 
-        <li class="dropdown" ng-if="currCollectionId">
+        <li class="dropdown" ng-if="$state.is('collection') && currCollection">
           <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Country <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <li ng-class="{active: !filter.country}"><a href="" ng-click="filter.country=null">All</a></li>
@@ -44,18 +44,23 @@
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
-        <form class="navbar-form navbar-left" role="search" ng-if="currCollectionId">
+        <form class="navbar-form navbar-left" role="search" ng-if="$state.is('collection') && currCollection">
           <div class="form-group has-feedback">
             <input ng-model="filter.query" type="text" class="form-control searchbox" placeholder="Search">
             <i class="glyphicon glyphicon-search form-control-feedback"></i>
           </div>
         </form>
-        <div class="btn-group navbar-form navbar-left viewbuttons" data-toggle="buttons" ng-if="currCollectionId">
-          <label class="btn btn-default glyphicon glyphicon-th" ng-class="{active: view.mode=='grid'}" title="Grid" ng-click="view.mode='grid'">
+        <div class="btn-group navbar-form navbar-left viewbuttons" data-toggle="buttons" ng-if="$state.is('collection') && currCollection">
+          <label class="btn btn-default glyphicon glyphicon-th" ng-class="{active: settings.view.mode=='grid'}" title="Grid" ng-click="view.mode='grid'">
             <input type="radio" name="viewMode" value="grid">
           </label>
-          <label class="btn btn-default glyphicon glyphicon-th-list" ng-class="{active: view.mode=='list'}" title="List" ng-click="view.mode='list'">
+          <label class="btn btn-default glyphicon glyphicon-th-list" ng-class="{active: settings.view.mode=='list'}" title="List" ng-click="view.mode='list'">
             <input type="radio" name="viewMode" value="list">
+          </label>
+        </div>
+        <div class="navbar-form navbar-left" data-toggle="buttons" ng-if="$state.is('collection') && currCollection">
+          <label class="btn btn-default glyphicon" ng-class="{'glyphicon-eye-close': filter.hideWatched, 'glyphicon-eye-open': !filter.hideWatched}" title="Show/hide watched movies" ng-click="filter.hideWatched=!filter.hideWatched">
+            <input type="checkbox" name="hideWatched" value="{{filter.hideWatched}}">
           </label>
         </div>
         <li ui-sref-active="active"><a ui-sref="settings">Settings</a></li>

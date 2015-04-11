@@ -177,8 +177,8 @@ moviesServices.factory('TMDBApiFactory', ['DBFactory', '_',
           }
           else {
             self.check(movie, collection, callback, function(m) {
-              console.log('Movie "'+movie.path+'" no longer exists. Removing from DB.')
-              toRemove.push(movie.hash)
+              // console.log('Movie "'+movie.path+'" no longer exists. Removing from DB.')
+              // toRemove.push(movie.hash)
             })
           }
         })
@@ -241,6 +241,7 @@ moviesServices.factory('FilesFactory', [
         walk(folder.path, folder.recursive, extensions, function(err, results) {
           if (err) {
             // TODO: Folder doesn't exist?
+            callback(folder.files)
           }
           else {
             var files = results.map(function(f) {

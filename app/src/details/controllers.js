@@ -74,7 +74,7 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$stateParams', 'DBFa
             this.on("ended", $scope.closevideo)
 
 
-            // What follows is a series of ugly hack to avoid conflicts betweens
+            // What follows is a series of ugly hacks to avoid conflicts betweens
             // the app's and the player's fullscreen modes. It might not
             // always work.
 

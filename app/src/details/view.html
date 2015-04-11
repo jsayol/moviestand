@@ -24,7 +24,7 @@
         <div class="controls">
 
           <div class="btn-group">
-            <button type="button" class="btn btn-primary btn-sm" ng-click="play()">
+            <button type="button" class="btn btn-primary btn-sm" ng-click="play(true)">
               <span class="glyphicon glyphicon-play"> Play</span>
             </button>
             <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -32,8 +32,8 @@
               <span class="sr-only">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu" role="menu">
-              <li><a href="" ng-click="play()">Default player</a></li>
               <li><a href="" ng-click="play(true)">Internally</a></li>
+              <li><a href="" ng-click="play()">Default player</a></li>
             </ul>
           </div>
 
@@ -66,7 +66,8 @@
     </div>
   </div>
 
-  <div class="videoembed embed-responsive embed-responsive-16by9">
+  <!-- <div class="videoembed embed-responsive embed-responsive-16by9"> -->
+  <div class="videoembed">
     <div class="close glyphicon glyphicon-remove" ng-click="closevideo()"></div>
   </div>
 </div>

@@ -1,18 +1,18 @@
-moviesServices.factory('FilterFactory', ['DBFactory',
-  function(DBFactory) {
-
+moviesServices.factory('FilterFactory', [
+  function() {
     return {
       genre: null,
       country: null,
-      query: ''
+      query: '',
+      hideWatched: true
     }
   }
 ])
 
 moviesApp.filter('movieFilter', function() {
-    return function(movies, genre, country) {
+    return function(movies, genre, country, hideWatched) {
       if (!genre && !country) {
-        return movies
+        return (hideWatched ? movies.filter(function(m) { return !m.watched }) : movies)
       }
       else {
         return movies.filter(function(movie) {
@@ -32,7 +32,7 @@ moviesApp.filter('movieFilter', function() {
             }
           }
 
-          return hasGenre && hasCountry
+          return hasGenre && hasCountry && !(hideWatched && movie.watched)
         })
       }
     }

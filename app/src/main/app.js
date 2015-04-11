@@ -30,10 +30,14 @@ moviesApp.config(['$stateProvider', '$urlRouterProvider',
         templateUrl: 'src/list/view.html',
         controller: 'MovieListCtrl'
       })
-      .state('movie', {
+      .state('collection.movie', {
         url: '/movie/:movieHash',
-        templateUrl: 'src/details/view.html',
-        controller: 'MovieDetailCtrl'
+        views: {
+          '@' : {
+            templateUrl: 'src/details/view.html',
+            controller: 'MovieDetailCtrl'
+          }
+        }
       })
       .state('settings', {
         url: '/settings',
@@ -71,8 +75,8 @@ moviesApp.config(['$stateProvider', '$urlRouterProvider',
 
       // Use $urlRouterProvider to configure any redirects (when) and invalid urls (otherwise).
       $urlRouterProvider
-        // .otherwise('/collection/')
-        .otherwise('/settings')
+        .otherwise('/collection/')
+        // .otherwise('/settings')
 
   }
 ])

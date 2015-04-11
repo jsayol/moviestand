@@ -6,7 +6,7 @@ The first collection on the listis the one that you will see when you open Movie
 
 <div class="wrapper">
   <ul class="list">
-    <li class="item" ng-repeat="collection in collections.query()" ui-sref-active="active">
+    <li class="item" ng-repeat="collection in collections.query() track by collection.id" ui-sref-active="active">
       <a ui-sref="settings.collections.details({id: collection.id})" class="name">
         <span class="glyphicon glyphicon-menu-hamburger"></span>
         <span> {{collection.name}}</span>

@@ -1,10 +1,12 @@
 var navbarControllers = angular.module('navbarControllers', [])
 
-headerControllers.controller('NavbarCtrl', ['$scope', '$rootScope', '$state', '$location', 'FilterFactory', 'DBFactory', 'CollectionsFactory', 'MoviesView',
-  function($scope, $rootScope, $state, $location, FilterFactory, DBFactory, CollectionsFactory, MoviesView) {
+headerControllers.controller('NavbarCtrl', ['$scope', '$rootScope', '$state', '$location', 'FilterFactory', 'DBFactory', 'CollectionsFactory', 'SettingsFactory', 'MoviesView',
+  function($scope, $rootScope, $state, $location, FilterFactory, DBFactory, CollectionsFactory, SettingsFactory, MoviesView) {
     $scope.location = $location
+    $scope.$state = $state
     $scope.filter = FilterFactory
     $scope.view = MoviesView
+    $scope.settings = SettingsFactory.query()
     $scope.collections = CollectionsFactory.query()
     $scope.currCollection = null
     $scope.currCollectionId = null

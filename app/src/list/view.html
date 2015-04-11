@@ -10,19 +10,19 @@
   -->
 
   <ul class="movies" ng-class="view.mode">
-    <li ng-repeat="movie in movies | filter:{ title:filter.query } | movieFilter:filter.genre:filter.country | orderBy:orderProp track by movie.path" class="movie-listing">
+    <li ng-repeat="movie in movies | filter:{ title:filter.query } | movieFilter:filter.genre:filter.country:filter.hideWatched | orderBy:orderProp track by movie.path" class="movie-listing">
 
       <div class="movie">
 
         <ul class="options">
           <li class="glyphicon glyphicon-play-circle play" title="Play" ng-click="play(movie)"></li>
-          <li class="glyphicon glyphicon-info-sign details" title="Show details" ng-click="info(movie)"></li>
-          <li class="glyphicon glyphicon-ban-circle markhide" title="Hide from list" ng-click="hide(movie)"></li>
-          <li class="glyphicon glyphicon-eye-open markwatched" title="Mark as watched" ng-click="watched(movie)"></li>
+          <li class="glyphicon glyphicon-info-sign details" title="Show details" ui-sref="collection.movie({movieHash: movie.hash})"></li>
+          <!-- <li class="glyphicon glyphicon-ban-circle markhide" title="Hide from list" ng-click="hide(movie)"></li> -->
+          <li class="glyphicon markwatched" ng-class="{'glyphicon-eye-close': !movie.watched, 'glyphicon-eye-open': movie.watched}" title="Toggle watched" ng-click="watched(movie)"></li>
         </ul>
 
         <div class="poster">
-          <a ui-sref="movie({movieHash: movie.hash})">
+          <a ui-sref="collection.movie({movieHash: movie.hash})">
             <img ng-if="movie.poster_path" ng-src="http://image.tmdb.org/t/p/w130{{movie.poster_path}}">
             <img ng-if="!movie.poster_path" ng-src="img/poster-placeholder.png">
           </a>

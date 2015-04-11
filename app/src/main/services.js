@@ -69,7 +69,6 @@ moviesServices.factory('CollectionsFactory', ['DBFactory', 'FilesFactory', 'TMDB
   function(DBFactory, FilesFactory, TMDBApiFactory, _) {
     var fs = require('fs')
     var initialized = {}
-    var crypto = require('crypto')
 
     var initFiles = function(collection, cbSave, cbInit, cbUpdate) {
       var folder = collection.folders[0]
@@ -85,12 +84,17 @@ moviesServices.factory('CollectionsFactory', ['DBFactory', 'FilesFactory', 'TMDB
           if (pos < 0) {
             console.log('New movie detected: '+f.path)
             f.hash = crypto.randomBytes(20).toString('hex')
+            f.watched = false
             folder.files.push(f)
             newFiles = true
           }
           else {
             // Speed up subsequent searches in the array
             delete current[pos]
+
+            if (typeof f.watched === 'undefined') {
+              f.watched = false
+            }
           }
         })
 
@@ -116,32 +120,7 @@ moviesServices.factory('CollectionsFactory', ['DBFactory', 'FilesFactory', 'TMDB
       save: DBFactory.collectionsSave,
 
       query: function(existOnly, callback) {
-        var allCollections = DBFactory.collections.value()
-
-        if (existOnly) {
-          var pending = allCollections.length
-          var list = []
-
-          if (pending > 0) {
-            allCollections.forEach(function(col) {
-              fs.stat(col.folders[0].path, function(err, stats) {
-                if (!err && stats && stats.isDirectory()) {
-                  list.push(col)
-                }
-
-                if (--pending === 0) {
-                  callback(list)
-                }
-              })
-            })
-          }
-          else {
-            callback(list)
-          }
-        }
-        else {
-          return allCollections
-        }
+        return DBFactory.collections.value()
       },
 
       getFiles: function(collection, cbInit, cbUpdate) {
