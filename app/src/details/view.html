@@ -37,7 +37,7 @@
             </ul>
           </div>
 
-          <div ng-if="movieInfo.trailers.youtube" class="btn-group">
+          <div ng-if="movieInfo.trailers.youtube.length > 0" class="btn-group">
             <button type="button" class="btn btn-primary btn-sm" ng-click="watchtrailer()">
               <span aria-hidden="true" class="glyphicon glyphicon-film"> Watch trailer</span>
             </button>

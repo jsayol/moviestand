@@ -2,9 +2,9 @@ module.exports = function(grunt) {
   "use strict"
 
   var hostPlatform = {
-  	windows: process.platform === 'win32',
-  	linux: process.platform === 'linux',
-  	osx: process.platform === 'darwin'
+    windows: process.platform === 'win32',
+    linux: process.platform === 'linux',
+    osx: process.platform === 'darwin'
   }
 
   var supportedPlatforms = [
@@ -57,14 +57,14 @@ module.exports = function(grunt) {
     },
 
     clean: {
-			builds: ['<%= dirs.build %>/<%= pkg.name %>/**'],
+      builds: ['<%= dirs.build %>/<%= pkg.name %>/**'],
       dist: ['<%= dirs.dist %>/windows/*.exe', '<%= dirs.dist %>/osx/*.dmg']
-		},
+    },
 
-		shell: {
-			setexecutable: {
-				command: function () {
-					if (hostPlatform.linux || hostPlatform.osx) {
+    shell: {
+      setexecutable: {
+        command: function () {
+          if (hostPlatform.linux || hostPlatform.osx) {
             return [
               'chmod +x <%= dirs.build %>/<%= pkg.name %>/linux*/<%= pkg.name %> || true',
               'chmod -R +x <%= dirs.build %>/<%= pkg.name %>/osx*/<%= pkg.name %>.app || true'
@@ -72,34 +72,34 @@ module.exports = function(grunt) {
           }
           else {
             // There's no need for this in Windows
-						return 'echo ""'
-					}
-				}
-			},
-			package: {
-				command: function (platform) {
+            return 'echo ""'
+          }
+        }
+      },
+      package: {
+        command: function (platform) {
           if (supportedPlatforms.indexOf(platform) > -1) {
             if (hostPlatform.linux || hostPlatform.osx) {
               var fileName = '<%= pkg.name %>-<%= pkg.version %>-'+platform+'.tar.gz'
               var platformOpt = (platform.substr(0, 3) == 'osx' ? '*' : '--xform=\'s,^\\.,<%= pkg.name %>,\' .')
-  						return [
-  							'cd <%= dirs.build %>/<%= pkg.name %>/'+platform,
-  							'tar --exclude-vcs -czf "../'+fileName+'" '+platformOpt,
-  							'echo "'+platform+' packaged sucessfully" || echo "'+platform+' failed to package"'
-  						].join(' && ')
-  					} else {
-  						return [
-  							'grunt compress:'+platform,
-  							'( echo "Compressed sucessfully" ) || ( echo "Failed to compress" )'
-  						].join(' && ')
-  					}
+              return [
+                'cd <%= dirs.build %>/<%= pkg.name %>/'+platform,
+                'tar --exclude-vcs -czf "../'+fileName+'" '+platformOpt,
+                'echo "'+platform+' packaged sucessfully" || echo "'+platform+' failed to package"'
+              ].join(' && ')
+            } else {
+              return [
+                'grunt compress:'+platform,
+                '( echo "Compressed sucessfully" ) || ( echo "Failed to compress" )'
+              ].join(' && ')
+            }
           }
           else {
             return 'echo "'+platform+' failed to package: platform not supported"'
           }
-				}
-			},
-		}
+        }
+      },
+    }
 
   })
 
@@ -108,14 +108,14 @@ module.exports = function(grunt) {
   supportedPlatforms.forEach(function (platform) {
     grunt.config.set('compress.'+platform, {
       options: {
-				mode: 'tgz',
-				archive: '<%= dirs.build %>/<%= pkg.name %>/<%= pkg.name %>-<%= pkg.version %>-'+platform+'.tar.gz'
-			},
-			expand: true,
-			cwd: '<%= dirs.build %>/<%= pkg.name %>/'+platform,
-			src: '**',
-			dest: (platform.substr(0, 3) == 'osx' ? '' : '<%= pkg.name %>')
-		})
+        mode: 'tgz',
+        archive: '<%= dirs.build %>/<%= pkg.name %>/<%= pkg.name %>-<%= pkg.version %>-'+platform+'.tar.gz'
+      },
+      expand: true,
+      cwd: '<%= dirs.build %>/<%= pkg.name %>/'+platform,
+      src: '**',
+      dest: (platform.substr(0, 3) == 'osx' ? '' : '<%= pkg.name %>')
+    })
   })
 
   // load all grunt tasks matching the ['grunt-*', '@*/grunt-*'] patterns
@@ -125,17 +125,17 @@ module.exports = function(grunt) {
   grunt.registerTask('build', [
     'bower_clean',
     'nodewebkit',
-		'shell:setexecutable'
+    'shell:setexecutable'
   ])
 
   // dist task
-	grunt.registerTask('dist', [
-		'clean:builds',
-		'build',
+  grunt.registerTask('dist', [
+    'clean:builds',
+    'build',
     // 'exec:createDmg',
-		// 'exec:createWinInstall',
+    // 'exec:createWinInstall',
     'package'
-	])
+  ])
 
   // Default task(s).
   grunt.registerTask('default', [
