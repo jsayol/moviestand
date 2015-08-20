@@ -9,11 +9,12 @@ module.exports = function(grunt) {
 
   var supportedPlatforms = [
     'win32',
-    'win64',
+    // 'win64',
     'linux32',
     'linux64',
-    'osx32',
-    'osx64'
+    // 'osx32',
+    // 'osx64'
+    'darwin'
   ]
 
   // Project configuration.
@@ -22,52 +23,59 @@ module.exports = function(grunt) {
 
     dirs: {
       build: './build',
+      cache: './cache',
       dist: './dist'
     },
 
-    nodewebkit: {
+    'build-electron-app': {
       options: {
-        version: '0.12.0',
-        buildDir: '<%= dirs.build %>',
-        // platforms: ['win64']
-        platforms: ['linux32', 'linux64', 'win32', 'win64', 'osx32', 'osx64'] // These are the platforms that we want to build
-      },
-      src: [
-        // Include
-        './src/**',
-        './node_modules/**',
-        './package.json',
-        './README.md',
-        './LICENSE',
+        platforms: ["linux64"],
+        build_dir: '<%= dirs.build %>',
+        cache_dir: '<%= dirs.cache %>',
+        app_files: [
+          // Include
+          './app/**',
+          './node_modules/**',
+          './package.json',
+          './README.md',
+          './LICENSE',
 
-        // Exclude
-        '!./node_modules/bower/**',
-        '!./node_modules/*grunt*/**',
-        '!./node_modules/lowdb/tmp/**',
-        '!./node_modules/**/History.md',
-        '!./node_modules/**/.npmignore',
-        '!./**/bin/**',
-        '!./**/test*/**',
-        '!./**/benchmark*/**',
-        '!./**/doc*/**',
-        '!./**/example*/**',
-        '!./**/demo*/**',
-        '!./**/.*/**'
-      ]
+          // Exclude
+          '!./node_modules/bower/**',
+          '!./node_modules/*grunt*/**',
+          '!./node_modules/lowdb/tmp/**',
+          '!./node_modules/**/History.md',
+          '!./node_modules/**/.npmignore',
+          '!./node_modules/electron-prebuilt/**',
+          '!./**/bin/**',
+          '!./**/test*/**',
+          '!./**/benchmark*/**',
+          '!./**/doc*/**',
+          '!./**/example*/**',
+          '!./**/demo*/**',
+          '!./**/.*/**'
+        ]
+      }
     },
 
     clean: {
-      builds: ['<%= dirs.build %>/<%= pkg.name %>/**'],
+      builds: ['<%= dirs.build %>/**'],
       dist: ['<%= dirs.dist %>/windows/*.exe', '<%= dirs.dist %>/osx/*.dmg']
     },
 
     shell: {
+      rebrand: {
+        command: function() {
+          // TODO: Change the binary name from "electron" to "<%= pkg.name %>"
+        }
+      },
       setexecutable: {
         command: function () {
           if (hostPlatform.linux || hostPlatform.osx) {
             return [
-              'chmod +x <%= dirs.build %>/<%= pkg.name %>/linux*/<%= pkg.name %> || true',
-              'chmod -R +x <%= dirs.build %>/<%= pkg.name %>/osx*/<%= pkg.name %>.app || true'
+              // TODO: When rebranding is implemented, change "electron" to "<%= pkg.name %>"
+              'chmod +x <%= dirs.build %>/linux*/electron || true',
+              'chmod -R +x <%= dirs.build %>/osx*/Electron.app || true'
             ].join(' && ')
           }
           else {
@@ -83,7 +91,7 @@ module.exports = function(grunt) {
               var fileName = '<%= pkg.name %>-<%= pkg.version %>-'+platform+'.tar.gz'
               var platformOpt = (platform.substr(0, 3) == 'osx' ? '*' : '--xform=\'s,^\\.,<%= pkg.name %>,\' .')
               return [
-                'cd <%= dirs.build %>/<%= pkg.name %>/'+platform,
+                'cd <%= dirs.build %>/'+platform,
                 'tar --exclude-vcs -czf "../'+fileName+'" '+platformOpt,
                 'echo "'+platform+' packaged sucessfully" || echo "'+platform+' failed to package"'
               ].join(' && ')
@@ -109,10 +117,10 @@ module.exports = function(grunt) {
     grunt.config.set('compress.'+platform, {
       options: {
         mode: 'tgz',
-        archive: '<%= dirs.build %>/<%= pkg.name %>/<%= pkg.name %>-<%= pkg.version %>-'+platform+'.tar.gz'
+        archive: '<%= dirs.build %>/<%= pkg.name %>-<%= pkg.version %>-'+platform+'.tar.gz'
       },
       expand: true,
-      cwd: '<%= dirs.build %>/<%= pkg.name %>/'+platform,
+      cwd: '<%= dirs.build %>/'+platform,
       src: '**',
       dest: (platform.substr(0, 3) == 'osx' ? '' : '<%= pkg.name %>')
     })
@@ -124,7 +132,7 @@ module.exports = function(grunt) {
   // build task
   grunt.registerTask('build', [
     'bower_clean',
-    'nodewebkit',
+    'build-electron-app',
     'shell:setexecutable'
   ])
 
@@ -141,5 +149,4 @@ module.exports = function(grunt) {
   grunt.registerTask('default', [
     'build',
   ])
-
 }

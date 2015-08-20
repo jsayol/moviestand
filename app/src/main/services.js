@@ -17,31 +17,40 @@ moviesServices.factory('MoviesView', [
     var obj = {
       mode: 'grid',
       isMaximized: false,
-      gui: require('nw.gui'),
+      //gui: require('nw.gui'),
+      shell: require('shell'),
+      remote: require('remote'),
       scrollPos: {}
     }
 
-    obj.win = obj.gui.Window.get()
+    obj.win = obj.remote.getCurrentWindow()
 
     obj.isFullscreen = obj.win.isFullscreen
 
-    obj.toggleFullscreen = function() { return obj.win.toggleFullscreen() }
+    obj.toggleFullscreen = function() {
+      return obj.win.setFullScreen(!obj.win.isFullScreen())
+      // return obj.win.toggleFullscreen()
+    }
 
-    obj.win.on('enter-fullscreen', function() {
-      console.log('entering fullscreen');
-      obj.isFullscreen = true
-      $('body').addClass('fullscreen')
+    obj.win.on('enter-full-screen', function() {
+      if (!obj.isFullscreen) {
+        console.log('entering fullscreen')
+        obj.isFullscreen = true
+        $('body').addClass('fullscreen')
+      }
     })
-    obj.win.on('leave-fullscreen', function() {
-      console.log('leaving fullscreen');
-      obj.isFullscreen = false
-      $('body').removeClass('fullscreen')
+    obj.win.on('leave-full-screen', function() {
+      if (obj.isFullscreen) {
+        console.log('leaving fullscreen')
+        obj.isFullscreen = false
+        $('body').removeClass('fullscreen')
+      }
     })
 
     return obj
   }
 ])
-
+//
 moviesServices.factory('LowDBFactory', [
   function() {
     var low = require('lowdb')
@@ -75,7 +84,7 @@ moviesServices.factory('CollectionsFactory', ['DBFactory', 'FilesFactory', 'TMDB
       FilesFactory.getFiles(folder, collection.extensions, function(files) {
         console.log('Got '+files.length+' files')
 
-        var crypto = require('crypto')
+        var nodeCrypto = require('crypto')
         var current = _.pluck(folder.files, 'path')
         var newFiles = false
 
@@ -83,7 +92,7 @@ moviesServices.factory('CollectionsFactory', ['DBFactory', 'FilesFactory', 'TMDB
           var pos = current.indexOf(f.path)
           if (pos < 0) {
             console.log('New movie detected: '+f.path)
-            f.hash = crypto.randomBytes(20).toString('hex')
+            f.hash = nodeCrypto.randomBytes(20).toString('hex')
             f.watched = false
             folder.files.push(f)
             newFiles = true
@@ -181,7 +190,8 @@ moviesServices.factory('CollectionsFactory', ['DBFactory', 'FilesFactory', 'TMDB
 
       sanitation: function(collection) {
         if (typeof collection.id !== 'string') {
-          collection.id = crypto.randomBytes(20).toString('hex')
+          var nodeCrypto = require('crypto')
+          collection.id = nodeCrypto.randomBytes(20).toString('hex')
         }
 
         if (typeof collection.name !== 'string') {

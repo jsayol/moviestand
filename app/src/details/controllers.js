@@ -72,46 +72,11 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$stateParams', 'DBFa
           function() {
             // this.play()
             this.on("ended", $scope.closevideo)
-
-
-            // What follows is a series of ugly hacks to avoid conflicts betweens
-            // the app's and the player's fullscreen modes. It might not
-            // always work.
-
-            this.on("fullscreenchange", function() {
-              var player = videojs('videoplayer')
-
-              if (!$scope.view.isFullscreen && player._am_restoreFullscreen) {
-                console.log('Restoring previous app fullscreen')
-                $scope.view.toggleFullscreen()
-              }
-
-              delete player._am_restoreFullscreen
-            });
-
-
-            var children = videojs('videoplayer').children()
-            var component = null
-            for (var i=0, len=children.length; i<len && !component; i++) {
-              component = children[i].fullscreenToggle
-            }
-
-            if (component) {
-              component.on("mouseup", function() {
-                if (!videojs('videoplayer').isFullscreen() && $scope.view.isFullscreen) {
-                  console.log('Exiting app fullscreen before entering player fullscreen')
-                  $scope.view.toggleFullscreen()
-                  setTimeout(function() { videojs('videoplayer')._am_restoreFullscreen = true }, 500)
-                }
-              })
-            }
-
-            // END of ugly hacks
           }
         )
       }
       else {
-        $scope.view.gui.Shell.openItem($scope.movie.path)
+        $scope.view.shell.openItem($scope.movie.path)
       }
     }
 
@@ -157,11 +122,11 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$stateParams', 'DBFa
     }
 
     $scope.gotoimdb = function() {
-      $scope.view.gui.Shell.openExternal('http://www.imdb.com/title/' + $scope.movieInfo.imdb_id)
+      $scope.view.shell.openExternal('http://www.imdb.com/title/' + $scope.movieInfo.imdb_id)
     }
 
     $scope.open = function() {
-      $scope.view.gui.Shell.showItemInFolder($scope.movie.path)
+      $scope.view.shell.showItemInFolder($scope.movie.path)
     }
   }
 ])

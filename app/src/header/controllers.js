@@ -29,12 +29,12 @@ headerControllers.controller('HeaderCtrl', ['$scope', 'MoviesView',
       }
     }
 
-    $scope.showDevTools = function() {
-      $scope.view.win.showDevTools()
+    $scope.toggleDevTools = function() {
+      $scope.view.win.toggleDevTools()
     }
 
     $scope.reload = function() {
-      $scope.view.win.reloadDev()
+      $scope.view.win.restart()
     }
 
     $scope.historyBack = function() {

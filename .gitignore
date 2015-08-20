@@ -14,7 +14,7 @@ db.tar.gz
 
 # Temporary ignores, will remove these eventually
 test
-Gruntfile2.js
+Gruntfile.*.js
 
 # Build folder and cache
 build

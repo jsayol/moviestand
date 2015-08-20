@@ -96,13 +96,10 @@ moviesControllers.controller('SettingsCollectionDetailsCtrl', ['$scope', '$state
     CollectionsFactory.sanitation($scope.collection)
 
     $('.collectionfolder').on('click', function() {
-      $('.folderselector')
-        // .attr('nwworkingdir', $scope.collection.folders[0].path)
-        .click()
-    })
-
-    $('.folderselector').on('change', function() {
-      $scope.collection.folders[0].path = $(this).val()
+      // $('.folderselector').click()
+      var dialog = require('remote').require('dialog');
+      this.value = dialog.showOpenDialog({properties: ['openDirectory'], defaultPath: $scope.collection.folders[0].path})
+      $scope.collection.folders[0].path = this.value
       $scope.$apply()
     })
 

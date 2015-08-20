@@ -1,11 +1,11 @@
 {
   "name": "moviestand",
   "private": true,
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "Movie collection manager",
-  "main": "app/index.html",
-  "repository": "https://github.com/jsayol/moviestan",
-  "issues": "https://github.com/jsayol/moviestan/issues",
+  "main": "app/index.js",
+  "repository": "https://github.com/jsayol/moviestand",
+  "issues": "https://github.com/jsayol/moviestand/issues",
   "license": "GPL-3.0",
   "dependencies": {
     "bower": "^1.3.1",
@@ -18,30 +18,15 @@
     "grunt-bower-clean": "^0.2.2",
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-compress": "^0.13.0",
-    "grunt-node-webkit-builder": "^1.0.2",
+    "grunt-electron-app-builder": "^0.1.0",
     "grunt-shell": "^1.1.2",
-    "load-grunt-tasks": "^3.1.0"
-  },
-  "window": {
-    "title": "Moviestand",
-    "toolbar": false,
-    "frame": false,
-    "transparent": false,
-    "resizable": true,
-    "width": 1000,
-    "height": 625,
-    "min_width": 600,
-    "min_height": 400,
-    "position": "center"
-  },
-  "webkit": {
-    "plugin": false,
-    "page-cache": true
+    "load-grunt-tasks": "^3.1.0",
+    "electron-prebuilt": "^0.30.4"
   },
   "scripts": {
     "postinstall": "bower install",
     "postupdate": "bower update",
     "prestart": "npm install --production",
-    "start": "nw ."
+    "start": "./node_modules/.bin/electron ."
   }
 }
