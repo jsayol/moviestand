@@ -14,19 +14,37 @@
     "moviedb": "^0.2.0"
   },
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-bower-clean": "^0.2.2",
-    "grunt-contrib-clean": "^0.6.0",
-    "grunt-contrib-compress": "^0.13.0",
-    "grunt-electron-simple-builder": "^0.1.0",
-    "grunt-shell": "^1.1.2",
-    "load-grunt-tasks": "^3.1.0",
-    "electron-prebuilt": "^0.30.4"
+    "electron-packager": "^5.0.2",
+    "electron-prebuilt": "^0.30.4",
+    "rimraf": "latest"
+  },
+  "config": {
+    "dirbuild": "build",
+    "dircache": "cache",
+    "electron": "0.30.4",
+    "name": "Moviestand",
+    "ignore": "cache|build|test|util|((.*)\\.?db\\.(.+))|(node_modules/(bower(.*)|rimraf|lodash))"
   },
   "scripts": {
-    "postinstall": "bower install",
-    "postupdate": "bower update",
+    "postinstall": "npm install util/bower-clean && bower install && bower-clean",
+    "postupdate": "bower update && bower-clean",
     "prestart": "npm install --production",
-    "start": "./node_modules/.bin/electron ."
+    "start": "electron .",
+    "clean": "npm run clean:win && npm run clean:linux && npm run clean:osx",
+    "clean:win": "npm run clean:win32 && npm run clean:win64",
+    "clean:linux": "npm run clean:linux32 && npm run clean:linux64",
+    "clean:osx": "rimraf $npm_package_config_dirbuild/$npm_package_config_name-darwin",
+    "clean:win32": "rimraf $npm_package_config_dirbuild/$npm_package_config_name-win32-ia32",
+    "clean:win64": "rimraf $npm_package_config_dirbuild/$npm_package_config_name-win32-x64",
+    "clean:linux32": "rimraf $npm_package_config_dirbuild/$npm_package_config_name-linux-ia32",
+    "clean:linux64": "rimraf $npm_package_config_dirbuild/$npm_package_config_name-linux-x64",
+    "build": "npm run build:osx && npm run build:win && npm run build:linux",
+    "build:win": "npm run build:win32 && npm run build:win64",
+    "build:linux": "npm run build:linux32 && npm run build:linux64",
+    "build:osx": "npm run clean:osx && electron-packager ./ $npm_package_config_name --out=$npm_package_config_dirbuild --platform=darwin --arch=x64 --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"$npm_package_config_ignore\"",
+    "build:win32": "npm run clean:win32 && electron-packager ./ $npm_package_config_name --out=$npm_package_config_dirbuild --platform=win32 --arch=ia32 --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"$npm_package_config_ignore\"",
+    "build:win64": "npm run clean:win64 && electron-packager ./ $npm_package_config_name --out=$npm_package_config_dirbuild --platform=win32 --arch=x64 --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"$npm_package_config_ignore\"",
+    "build:linux32": "npm run clean:linux32 && electron-packager ./ $npm_package_config_name --out=$npm_package_config_dirbuild --platform=linux --arch=ia32 --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"$npm_package_config_ignore\"",
+    "build:linux64": "npm run clean:linux64 && electron-packager ./ $npm_package_config_name --out=$npm_package_config_dirbuild --platform=linux --arch=x64 --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"$npm_package_config_ignore\""
   }
 }

@@ -1,19 +1,21 @@
 {
-	"name": "moviestan",
+	"name": "moviestand",
 	"dependencies": {
 		"angular": "1.3.x",
 		"angular-ui-router": "~0.2.13",
 		"angular-route": "1.3.x",
 		"bootstrap": "~3.3.4",
 		"jquery": "2.1.x",
-		"videojs": "~4.12.5",
+		"video.js": "^4.11.0",
 		"videojs-youtube": "~1.2.9"
 	},
 	"dependenciesIgnore": {
-		"angular-ui-router": ["**/!(release)"],
-		"bootstrap": ["**/!(dist)"],
-		"jquery": ["**/!(dist)"],
-		"videojs": ["**/!(dist)"],
-		"videojs-youtube": ["**/!(dist)"]
+		"angular": ["!**/angular.js"],
+		"angular-route": ["!**/angular-route.js"],
+		"angular-ui-router": ["!**/release/angular-ui-router.js"],
+		"bootstrap": ["!**/dist/**", "**/grunt/.", "**/js/."],
+		"jquery": ["!**/dist/jquery.js"],
+		"video.js": ["!**/dist/**"],
+		"videojs-youtube": ["!**/dist/**"]
 	}
 }
