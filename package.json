@@ -45,6 +45,14 @@
     "build:win32": "npm run clean:win32 && electron-packager ./ $npm_package_config_name --out=$npm_package_config_dirbuild --platform=win32 --arch=ia32 --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"$npm_package_config_ignore\"",
     "build:win64": "npm run clean:win64 && electron-packager ./ $npm_package_config_name --out=$npm_package_config_dirbuild --platform=win32 --arch=x64 --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"$npm_package_config_ignore\"",
     "build:linux32": "npm run clean:linux32 && electron-packager ./ $npm_package_config_name --out=$npm_package_config_dirbuild --platform=linux --arch=ia32 --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"$npm_package_config_ignore\"",
-    "build:linux64": "npm run clean:linux64 && electron-packager ./ $npm_package_config_name --out=$npm_package_config_dirbuild --platform=linux --arch=x64 --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"$npm_package_config_ignore\""
+    "build:linux64": "npm run clean:linux64 && electron-packager ./ $npm_package_config_name --out=$npm_package_config_dirbuild --platform=linux --arch=x64 --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"$npm_package_config_ignore\"",
+    "upx": "npm run upx:win && npm run upx:linux",
+    "upx:win": "npm run upx:win32 && npm run upx:win64",
+    "upx:linux": "npm run upx:linux32 && npm run upx:linux64",
+    "upx:win32": "upx $npm_package_config_dirbuild/$npm_package_config_name-win32-ia32/$npm_package_config_name.exe",
+    "upx:win64": "upx $npm_package_config_dirbuild/$npm_package_config_name-win32-x64/$npm_package_config_name.exe",
+    "upx:linux32": "upx $npm_package_config_dirbuild/$npm_package_config_name-linux-ia32/$npm_package_config_name",
+    "upx:linux64": "upx $npm_package_config_dirbuild/$npm_package_config_name-linux-x64/$npm_package_config_name",
+    "upx:osx": "echo 'UPX is not supported for Mac OS X builds, sorry'"
   }
 }
