@@ -1,7 +1,7 @@
 {
   "name": "moviestand",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Movie collection manager",
   "main": "app/index.js",
   "repository": "https://github.com/jsayol/moviestand",
@@ -53,6 +53,6 @@
     "upx:win64": "upx $npm_package_config_dirbuild/$npm_package_config_name-win32-x64/$npm_package_config_name.exe",
     "upx:linux32": "upx $npm_package_config_dirbuild/$npm_package_config_name-linux-ia32/$npm_package_config_name",
     "upx:linux64": "upx $npm_package_config_dirbuild/$npm_package_config_name-linux-x64/$npm_package_config_name",
-    "upx:osx": "echo 'UPX is not supported for Mac OS X builds, sorry'"
+    "upx:osx": "echo 'Sorry, UPX is not supported for Mac OS X builds right now.'"
   }
 }
