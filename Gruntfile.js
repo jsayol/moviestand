@@ -27,9 +27,10 @@ module.exports = function(grunt) {
       dist: './dist'
     },
 
-    'build-electron-app': {
+    'electron-simple-builder': {
       options: {
-        platforms: ["linux64"],
+        name: "<%= pkg.name %>",
+        platforms: ["linux32"],
         build_dir: '<%= dirs.build %>',
         cache_dir: '<%= dirs.cache %>',
         app_files: [
@@ -59,7 +60,7 @@ module.exports = function(grunt) {
     },
 
     clean: {
-      builds: ['<%= dirs.build %>/**'],
+      builds: ['<%= dirs.build %>/<%= pkg.name %>/**'],
       dist: ['<%= dirs.dist %>/windows/*.exe', '<%= dirs.dist %>/osx/*.dmg']
     },
 
@@ -74,8 +75,8 @@ module.exports = function(grunt) {
           if (hostPlatform.linux || hostPlatform.osx) {
             return [
               // TODO: When rebranding is implemented, change "electron" to "<%= pkg.name %>"
-              'chmod +x <%= dirs.build %>/linux*/electron || true',
-              'chmod -R +x <%= dirs.build %>/osx*/Electron.app || true'
+              'chmod +x <%= dirs.build %>/<%= pkg.name %>/linux*/electron || true',
+              'chmod -R +x <%= dirs.build %>/<%= pkg.name %>/osx*/Electron.app || true'
             ].join(' && ')
           }
           else {
@@ -91,7 +92,7 @@ module.exports = function(grunt) {
               var fileName = '<%= pkg.name %>-<%= pkg.version %>-'+platform+'.tar.gz'
               var platformOpt = (platform.substr(0, 3) == 'osx' ? '*' : '--xform=\'s,^\\.,<%= pkg.name %>,\' .')
               return [
-                'cd <%= dirs.build %>/'+platform,
+                'cd <%= dirs.build %>/<%= pkg.name %>/'+platform,
                 'tar --exclude-vcs -czf "../'+fileName+'" '+platformOpt,
                 'echo "'+platform+' packaged sucessfully" || echo "'+platform+' failed to package"'
               ].join(' && ')
@@ -103,7 +104,9 @@ module.exports = function(grunt) {
             }
           }
           else {
-            return 'echo "'+platform+' failed to package: platform not supported"'
+            grunt.log.error(platform+' failed to package: platform not supported');
+            // return 'echo "'+platform+' failed to package: platform not supported"'
+            return ''
           }
         }
       },
@@ -120,7 +123,7 @@ module.exports = function(grunt) {
         archive: '<%= dirs.build %>/<%= pkg.name %>-<%= pkg.version %>-'+platform+'.tar.gz'
       },
       expand: true,
-      cwd: '<%= dirs.build %>/'+platform,
+      cwd: '<%= dirs.build %>/<%= pkg.name %>/'+platform,
       src: '**',
       dest: (platform.substr(0, 3) == 'osx' ? '' : '<%= pkg.name %>')
     })
@@ -132,7 +135,7 @@ module.exports = function(grunt) {
   // build task
   grunt.registerTask('build', [
     'bower_clean',
-    'build-electron-app',
+    'electron-simple-builder',
     'shell:setexecutable'
   ])
 
@@ -142,7 +145,7 @@ module.exports = function(grunt) {
     'build',
     // 'exec:createDmg',
     // 'exec:createWinInstall',
-    'package'
+    'shell:package'
   ])
 
   // Default task(s).
