@@ -15,15 +15,16 @@
     "electron-prebuilt": "^0.30.4"
   },
   "devDependencies": {
+    "electron-builder": "^2.0.0",
     "electron-packager": "^5.0.2",
-    "rimraf": "latest"
+    "rimraf": "latest",
+    "tar.gz": "^1.0.0"
   },
   "config": {
-    "dirbuild": "build",
     "dircache": "cache",
-    "electron": "0.30.4",
-    "name": "Moviestand",
-    "ignore": "cache|build|test|util|((.*)\\.?db\\.(.+))|(node_modules/(bower(.*)|rimraf|lodash))"
+    "dirbuild": "build",
+    "dirdist": "dist",
+    "electron": "0.30.4"
   },
   "scripts": {
     "postinstall": "npm install util/bower-clean && bower install && bower-clean",
@@ -33,26 +34,35 @@
     "clean": "npm run clean:win && npm run clean:linux && npm run clean:osx",
     "clean:win": "npm run clean:win32 && npm run clean:win64",
     "clean:linux": "npm run clean:linux32 && npm run clean:linux64",
-    "clean:osx": "rimraf $npm_package_config_dirbuild/$npm_package_config_name-darwin",
-    "clean:win32": "rimraf $npm_package_config_dirbuild/$npm_package_config_name-win32-ia32",
-    "clean:win64": "rimraf $npm_package_config_dirbuild/$npm_package_config_name-win32-x64",
-    "clean:linux32": "rimraf $npm_package_config_dirbuild/$npm_package_config_name-linux-ia32",
-    "clean:linux64": "rimraf $npm_package_config_dirbuild/$npm_package_config_name-linux-x64",
+    "clean:osx": "rimraf $npm_package_config_dirbuild/$npm_package_name-darwin",
+    "clean:win32": "rimraf $npm_package_config_dirbuild/$npm_package_name-win32-ia32",
+    "clean:win64": "rimraf $npm_package_config_dirbuild/$npm_package_name-win32-x64",
+    "clean:linux32": "rimraf $npm_package_config_dirbuild/$npm_package_name-linux-ia32",
+    "clean:linux64": "rimraf $npm_package_config_dirbuild/$npm_package_name-linux-x64",
     "build": "npm run build:osx && npm run build:win && npm run build:linux",
     "build:win": "npm run build:win32 && npm run build:win64",
     "build:linux": "npm run build:linux32 && npm run build:linux64",
-    "build:osx": "npm run clean:osx && electron-packager ./ $npm_package_config_name --out=$npm_package_config_dirbuild --platform=darwin --arch=x64 --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"$npm_package_config_ignore\"",
-    "build:win32": "npm run clean:win32 && electron-packager ./ $npm_package_config_name --out=$npm_package_config_dirbuild --platform=win32 --arch=ia32 --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"$npm_package_config_ignore\"",
-    "build:win64": "npm run clean:win64 && electron-packager ./ $npm_package_config_name --out=$npm_package_config_dirbuild --platform=win32 --arch=x64 --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"$npm_package_config_ignore\"",
-    "build:linux32": "npm run clean:linux32 && electron-packager ./ $npm_package_config_name --out=$npm_package_config_dirbuild --platform=linux --arch=ia32 --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"$npm_package_config_ignore\"",
-    "build:linux64": "npm run clean:linux64 && electron-packager ./ $npm_package_config_name --out=$npm_package_config_dirbuild --platform=linux --arch=x64 --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"$npm_package_config_ignore\"",
+    "build:osx": "npm run clean:osx && npm run _builder -- --platform=darwin --arch=x64",
+    "build:win32": "npm run clean:win32 && npm run _builder -- --platform=win32 --arch=ia32",
+    "build:win64": "npm run clean:win64 && npm run _builder -- --platform=win32 --arch=x64",
+    "build:linux32": "npm run clean:linux32 && npm run _builder -- --platform=linux --arch=ia32",
+    "build:linux64": "npm run clean:linux64 && npm run _builder -- --platform=linux --arch=x64",
+    "_builder": "electron-packager ./ $npm_package_name --out=$npm_package_config_dirbuild --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"cache|build|dist|test|util|((.*)\\.?db\\.(.+))|(node_modules/(electron(.+)|bower(.*)|rimraf|tar\\.gz))\"",
     "upx": "npm run upx:win && npm run upx:linux",
     "upx:win": "npm run upx:win32 && npm run upx:win64",
     "upx:linux": "npm run upx:linux32 && npm run upx:linux64",
-    "upx:win32": "upx $npm_package_config_dirbuild/$npm_package_config_name-win32-ia32/$npm_package_config_name.exe",
-    "upx:win64": "upx $npm_package_config_dirbuild/$npm_package_config_name-win32-x64/$npm_package_config_name.exe",
-    "upx:linux32": "upx $npm_package_config_dirbuild/$npm_package_config_name-linux-ia32/$npm_package_config_name",
-    "upx:linux64": "upx $npm_package_config_dirbuild/$npm_package_config_name-linux-x64/$npm_package_config_name",
-    "upx:osx": "echo 'Sorry, UPX is not supported for Mac OS X builds right now.'"
+    "upx:win32": "upx $npm_package_config_dirbuild/$npm_package_name-win32-ia32/$npm_package_name.exe",
+    "upx:win64": "upx $npm_package_config_dirbuild/$npm_package_name-win32-x64/$npm_package_name.exe",
+    "upx:linux32": "upx $npm_package_config_dirbuild/$npm_package_name-linux-ia32/$npm_package_name",
+    "upx:linux64": "upx $npm_package_config_dirbuild/$npm_package_name-linux-x64/$npm_package_name",
+    "upx:osx": "echo 'Sorry, UPX is not supported for Mac OS X builds right now.'",
+    "pack": "npm run pack:osx && npm run pack:win",
+    "pack:win": "npm run pack:win32 && npm run pack:win64",
+    "pack:osx": "electron-builder \"$npm_package_config_dirbuild/$npm_package_name-darwin-x64/$npm_package_name.app\" --platform=osx --out=\"$npm_package_config_dirdist\" --config=packager.json",
+    "pack:win32": "electron-builder \"$npm_package_config_dirbuild/$npm_package_name-win32-ia32\" --platform=win --out=\"$npm_package_config_dirdist\" --config=packager.json",
+    "pack:win322": "echo electron-builder \"$npm_package_config_dirbuild/$npm_package_name-win32-ia32\" --platform=win --out=\"$npm_package_config_dirdist\" --config=packager.json",
+    "pack:win64": "electron-builder \"$npm_package_config_dirbuild/$npm_package_name-win32-x64\" --platform=win --out=\"$npm_package_config_dirdist\" --config=packager.json",
+    "pack:linux32": "targz c \"$npm_package_config_dirbuild/$npm_package_name-linux-ia32\" \"$npm_package_config_dirdist/$npm_package_name-linux-ia32.tar.gz\"",
+    "pack:linux64": "targz c \"$npm_package_config_dirbuild/$npm_package_name-linux-x64\" \"$npm_package_config_dirdist/$npm_package_name-linux-x64.tar.gz\""
   }
 }

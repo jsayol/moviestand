@@ -11,6 +11,17 @@
   overflow: auto;
 }
 
+.settings-container .close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  color: rgb(200, 200, 200);
+  opacity: 1;
+  font-weight: normal;
+  z-index: 10;
+  -webkit-filter: drop-shadow(0px 0px 7px rgba(0,0,0,0.75));
+}
+
 
 /****** MENU ******/
 

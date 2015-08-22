@@ -34,7 +34,7 @@ headerControllers.controller('HeaderCtrl', ['$scope', 'MoviesView',
     }
 
     $scope.reload = function() {
-      $scope.view.win.restart()
+      $scope.view.win.reloadIgnoringCache()
     }
 
     $scope.historyBack = function() {

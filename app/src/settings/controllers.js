@@ -31,6 +31,12 @@ moviesControllers.controller('SettingsCtrl', ['$scope', '$rootScope', '$state', 
       }
     ]
 
+    $scope.goback = function() {
+      // console.log('goback SettingsCtrl: '+window.history.back)
+      // var remote = require('remote')
+      // remote.getCurrentWebContents().goBack()
+      // window.history.back()
+    }
 
     $rootScope.$on('$stateChangeStart', function(event, toState) {
       var entry = _.find($scope.entries, {state: toState.name})
@@ -41,15 +47,14 @@ moviesControllers.controller('SettingsCtrl', ['$scope', '$rootScope', '$state', 
   }
 ])
 
-moviesControllers.controller('SettingsSettingsCtrl', ['$scope', 'SettingsFactory',
-  function($scope, $stateParams, SettingsFactory) {
-
-  }
-])
-
 moviesControllers.controller('SettingsCollectionsCtrl', ['$scope', '$state', 'CollectionsFactory',
   function($scope, $state, CollectionsFactory) {
     $scope.collections = CollectionsFactory
+
+    $scope.goback = function() {
+      console.log('goback SettingsCollectionsCtrl')
+      window.history.back()
+    }
 
     $scope.newCollection = function() {
       var newCollection = CollectionsFactory.createNew()
@@ -71,6 +76,12 @@ moviesControllers.controller('SettingsCollectionsCtrl', ['$scope', '$state', 'Co
       })
       dialog.modal()
     }
+
+  }
+])
+
+moviesControllers.controller('SettingsSettingsCtrl', ['$scope', 'SettingsFactory',
+  function($scope, $stateParams, SettingsFactory) {
 
   }
 ])

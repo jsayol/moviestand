@@ -18,4 +18,8 @@ Gruntfile.*.js
 
 # Build folder and cache
 build
+dist
 cache
+
+# Assets
+assets

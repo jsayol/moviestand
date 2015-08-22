@@ -1,6 +1,4 @@
 <div class="details-container">
-  <!-- <div class="close glyphicon glyphicon-remove" ng-click="goback()"></div> -->
-
   <img class="background-loader" ng-src="http://image.tmdb.org/t/p/w780{{movieInfo.backdrop_path}}" data-hash="{{movieHash}}"></img>
 
   <div class="backdrop" id="backdrop-{{movieHash}}"></div>
@@ -13,6 +11,7 @@
     </div>
     <div class="right">
       <div class="rightcontainer">
+        <div class="close glyphicon glyphicon-remove" ng-click="goback()"></div>
         <h1 class="title">{{movieInfo.title}}</h1>
         <ul class="info">
           <li>{{movieInfo.release_date | date:'yyyy'}}</li>

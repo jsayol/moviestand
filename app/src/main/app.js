@@ -81,34 +81,6 @@ moviesApp.config(['$stateProvider', '$urlRouterProvider',
   }
 ])
 
-// moviesApp.config(['$routeProvider', '$compileProvider',
-//   function($routeProvider, $compileProvider) {
-//     $routeProvider.
-//       // when('/', {
-//       //   templateUrl: 'src/list/view.html',
-//       //   controller: 'MovieListCtrl'
-//       // }).
-//       when('/collection/:collection', {
-//         templateUrl: 'src/list/view.html',
-//         controller: 'MovieListCtrl'
-//       }).
-//       when('/movie/:movieHash', {
-//         templateUrl: 'src/details/view.html',
-//         controller: 'MovieDetailCtrl'
-//       }).
-//       when('/settings', {
-//         templateUrl: 'src/settings/view.html',
-//         controller: 'SettingsCtrl'
-//       }).
-//       otherwise({
-//         redirectTo: '/settings'
-//       })
-//
-//     // $compileProvider.imgSrcSanitizationWhitelist('app://')
-//     // $compileProvider.imgSrcSanitizationWhitelist('/^\s/img\//')
-//   }
-// ])
-
 var moviesControllers = angular.module('moviesControllers', [])
 
 // We already have a limitTo filter built-in to angular,
