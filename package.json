@@ -22,7 +22,20 @@
   },
   "config": {
     "electron": "0.30.4",
-    "ignore": "cache|build|dist|test|util|assets|((.*)\\.?db\\.(.+))|(node_modules/(\\.bin|electron(.+)|bower(.*)|rimraf|tar\\.gz))",
+    "ignore": [
+      "^/cache",
+      "^/build",
+      "^/dist",
+      "^/test",
+      "^/util",
+      "^/assets",
+      "^/(bower|packager)\\.json",
+      "^/tasks\\.js",
+      "^/npm-debug\\.log",
+      "^/\\.(.+)",
+      "^/(\\w+)\\.db\\.json",
+      "^/(node_modules/(\\.bin|electron(.+)|bower(.*)|rimraf|tar\\.gz))"
+    ],
     "dirs": {
       "cache": "cache",
       "build": "build",

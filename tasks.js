@@ -48,6 +48,18 @@ var app = {
   }
 }
 
+if (app.ignore === undefined) {
+  var envkeys = Object.keys(process.env).filter(function(k) {
+    return /^npm_package_config_ignore_/.test(k)
+  })
+  if (envkeys.length) {
+    app.ignore = []
+    envkeys.forEach(function(k) {
+      app.ignore.push(process.env[k])
+    })
+  }
+}
+
 try {
   switch (process.argv[2]) {
     case 'clean':
@@ -95,7 +107,7 @@ function goClean(target) {
   var toclean = path.join(app.dirs.build, app.name + '-' + target.platform + '-' + target.arch)
 
   console.log('Cleaning '+toclean+' ...')
-  rimraf.sync(toclean)
+  rimraf.sync(toclean, {disableGlob: true})
 }
 
 function goBuild(target) {
@@ -113,6 +125,7 @@ function goBuild(target) {
       out: app.dirs.build,
       cache: app.dirs.cache,
       ignore: app.ignore
+      // , asar: true
   }
 
   packager(opts, function (err, appPath) {
@@ -153,7 +166,7 @@ function goPack(target) {
 
   if (builderOpt) {
     var builder = (require('electron-builder')).init()
-    builder.build(builderOpt)
+    builder.build(builderOpt, function() {})
   }
   else {
     goPackTgz(target)
