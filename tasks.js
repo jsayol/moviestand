@@ -124,8 +124,8 @@ function goBuild(target) {
       version: app.electron,
       out: app.dirs.build,
       cache: app.dirs.cache,
-      ignore: app.ignore
-      // , asar: true
+      ignore: app.ignore,
+      asar: true
   }
 
   packager(opts, function (err, appPath) {
@@ -140,7 +140,7 @@ function goBuild(target) {
 
 function goPack(target) {
   var builderOpt = null
-  var appPath = path.join(app.dirs.build, app.name + '-' + target.platform + '-' + target.arch)
+  var appPath = path.join(process.cwd(), app.dirs.build, app.name + '-' + target.platform + '-' + target.arch)
 
   if (target.platform == 'win32') {
     builderOpt = {
@@ -166,7 +166,13 @@ function goPack(target) {
 
   if (builderOpt) {
     var builder = (require('electron-builder')).init()
-    builder.build(builderOpt, function() {})
+    builder.build(builderOpt, function(error) {
+      if ( error ) {
+        throw error;
+      }
+
+      console.log('Created installer for ' + builderOpt.platform + '-' + target.arch);
+    })
   }
   else {
     goPackTgz(target)
@@ -193,3 +199,4 @@ function goPackTgz(target) {
 function showHelp() {
   console.log('HELP!')
 }
+

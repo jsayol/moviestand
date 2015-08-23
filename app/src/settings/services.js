@@ -15,7 +15,7 @@ moviesServices.factory('SettingsFactory', ['LowDBFactory',
       }
     }
 
-    var settingsDB = LowDBFactory('settings.json')
+    var settingsDB = LowDBFactory(LowDBFactory._userDataDir + 'settings.json')
 
     var ret = {
       query: function() {

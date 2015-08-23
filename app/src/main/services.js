@@ -7,8 +7,7 @@ var moviesServices = angular.module('moviesServices', [])
 
 moviesServices.factory('_', [
   function() {
-    var _ = require('lowdb/node_modules/lodash')
-    return _
+    return require('lodash')
   }
 ])
 
@@ -54,14 +53,26 @@ moviesServices.factory('MoviesView', [
 moviesServices.factory('LowDBFactory', [
   function() {
     var low = require('lowdb')
+
+    switch (process.platform) {
+      case 'linux':
+        low._userDataDir = process.env.HOME + '/.moviestand/'
+        break
+      case 'darwin':
+        low._userDataDir = process.env.HOME + '/Library/Application Support/Moviestand/'
+        break
+      case 'win32':
+        low._userDataDir = process.env.APPDATA + '/Moviestand/'
+        break
+    }
+
     return low
   }
 ])
 
 moviesServices.factory('DBFactory', ['LowDBFactory',
   function(LowDBFactory) {
-    var prefix = ''
-    // var moviesDB = LowDBFactory(prefix + 'movies.db.json')
+    var prefix = LowDBFactory._userDataDir
     var tmdbDB = LowDBFactory(prefix + 'tmdb.db.json')
     var collectionsDB = LowDBFactory(prefix + 'collections.db.json')
 
