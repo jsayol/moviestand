@@ -15,26 +15,42 @@ moviesServices.factory('SettingsFactory', ['LowDBFactory',
       }
     }
 
-    var settingsDB = LowDBFactory(LowDBFactory._userDataDir + 'settings.json')
-
     var ret = {
-      query: function() {
-        return settingsDB('settings').value()
+      db: LowDBFactory(LowDBFactory._userDataDir + 'settings.json'),
+
+      set: function(section, prop, value) {
+        var obj = this.db('settings').value()[0]
+        if (!obj[section]) {
+          obj[section] = {}
+        }
+        obj[section][prop] = value
+        this.db.save()
+        return this
       },
 
-      sanitation: function(settings) {
-        $.extend(true, settings, defaults)
+      get: function(section, prop) {
+        return this.db('settings').value()[0][section][prop]
+      },
+
+      query: function() {
+        return this.db('settings').value()
+      },
+
+      sanitation: function() {
+        $.extend(true, this.query()[0], defaults)
         this.save()
-        return settings
+        return this
       },
 
       save: function() {
-        settingsDB.save()
+        this.db.save()
       }
     }
 
-    ret.sanitation(ret.query())
+    if (ret.query().length == 0) {
+      ret.db('settings').push({})
+    }
 
-    return ret
+    return ret.sanitation()
   }
 ])

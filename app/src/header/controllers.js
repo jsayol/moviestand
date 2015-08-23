@@ -4,14 +4,6 @@ headerControllers.controller('HeaderCtrl', ['$scope', 'MoviesView',
   function($scope, MoviesView) {
     $scope.view = MoviesView
 
-    $scope.view.win.on('maximize', function() {
-      $scope.view.isMaximized = true
-    })
-
-    $scope.view.win.on('unmaximize', function() {
-      $scope.view.isMaximized = false
-    })
-
     $scope.minimize = function() {
       $scope.view.win.minimize()
     }

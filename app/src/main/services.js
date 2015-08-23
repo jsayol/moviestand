@@ -11,8 +11,8 @@ moviesServices.factory('_', [
   }
 ])
 
-moviesServices.factory('MoviesView', [
-  function() {
+moviesServices.factory('MoviesView', ['SettingsFactory',
+  function(SettingsFactory) {
     var obj = {
       mode: 'grid',
       isMaximized: false,
@@ -22,27 +22,66 @@ moviesServices.factory('MoviesView', [
       scrollPos: {}
     }
 
+    //obj.settings = SettingsFactory
+
     obj.win = obj.remote.getCurrentWindow()
 
     obj.isFullscreen = obj.win.isFullscreen
+
+    if (SettingsFactory.get('view', 'maximized')) {
+      obj.win.maximize()
+    }
+    else {
+      var savedWinSize = SettingsFactory.get('view', 'size')
+      var savedWinPos = SettingsFactory.get('view', 'position')
+
+      if (savedWinSize) {
+        obj.win.setSize(savedWinSize[0], savedWinSize[1])
+      }
+
+      if (savedWinPos) {
+        obj.win.setPosition(savedWinPos[0], savedWinPos[1])
+      }
+    }
 
     obj.toggleFullscreen = function() {
       return obj.win.setFullScreen(!obj.win.isFullScreen())
       // return obj.win.toggleFullscreen()
     }
 
+    obj.win.on('resize', function() {
+      SettingsFactory.set('view', 'size', obj.win.getSize())
+    })
+
+    obj.win.on('move', function() {
+      SettingsFactory.set('view', 'position', obj.win.getPosition())
+    })
+
+    obj.win.on('maximize', function() {
+      obj.isMaximized = true
+      SettingsFactory.set('view', 'maximized', true)
+    })
+
+    obj.win.on('unmaximize', function() {
+      obj.isMaximized = false
+      SettingsFactory.set('view', 'maximized', false)
+    })
+
     obj.win.on('enter-full-screen', function() {
       if (!obj.isFullscreen) {
         console.log('entering fullscreen')
         obj.isFullscreen = true
         $('body').addClass('fullscreen')
+        SettingsFactory.set('view', 'fullscreen', true)
       }
     })
+
     obj.win.on('leave-full-screen', function() {
       if (obj.isFullscreen) {
         console.log('leaving fullscreen')
         obj.isFullscreen = false
         $('body').removeClass('fullscreen')
+        SettingsFactory.set('view', 'fullscreen', false)
       }
     })
 
