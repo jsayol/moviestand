@@ -21,33 +21,26 @@
     "tar.gz": "^1.0.0"
   },
   "config": {
-    "dircache": "cache",
-    "dirbuild": "build",
-    "dirdist": "dist",
-    "electron": "0.30.4"
+    "electron": "0.30.4",
+    "ignore": "cache|build|dist|test|util|assets|((.*)\\.?db\\.(.+))|(node_modules/(\\.bin|electron(.+)|bower(.*)|rimraf|tar\\.gz))",
+    "dirs": {
+      "cache": "cache",
+      "build": "build",
+      "dist": "dist"
+    }
   },
   "scripts": {
     "postinstall": "npm install util/bower-clean && bower install && bower-clean",
     "postupdate": "bower update && bower-clean",
     "prestart": "npm install --production",
     "start": "electron .",
-    "clean": "npm run clean:win && npm run clean:linux && npm run clean:osx",
-    "clean:win": "npm run clean:win32 && npm run clean:win64",
-    "clean:linux": "npm run clean:linux32 && npm run clean:linux64",
-    "clean:osx": "rimraf $npm_package_config_dirbuild/$npm_package_name-darwin",
-    "clean:win32": "rimraf $npm_package_config_dirbuild/$npm_package_name-win32-ia32",
-    "clean:win64": "rimraf $npm_package_config_dirbuild/$npm_package_name-win32-x64",
-    "clean:linux32": "rimraf $npm_package_config_dirbuild/$npm_package_name-linux-ia32",
-    "clean:linux64": "rimraf $npm_package_config_dirbuild/$npm_package_name-linux-x64",
-    "build": "npm run build:osx && npm run build:win && npm run build:linux",
-    "build:win": "npm run build:win32 && npm run build:win64",
-    "build:linux": "npm run build:linux32 && npm run build:linux64",
-    "build:osx": "npm run clean:osx && npm run _builder -- --platform=darwin --arch=x64",
-    "build:win32": "npm run clean:win32 && npm run _builder -- --platform=win32 --arch=ia32",
-    "build:win64": "npm run clean:win64 && npm run _builder -- --platform=win32 --arch=x64",
-    "build:linux32": "npm run clean:linux32 && npm run _builder -- --platform=linux --arch=ia32",
-    "build:linux64": "npm run clean:linux64 && npm run _builder -- --platform=linux --arch=x64",
-    "_builder": "electron-packager ./ $npm_package_name --out=$npm_package_config_dirbuild --version=$npm_package_config_electron --cache=$npm_package_config_dircache --ignore=\"cache|build|dist|test|util|((.*)\\.?db\\.(.+))|(node_modules/(electron(.+)|bower(.*)|rimraf|tar\\.gz))\"",
+
+    "task": "node tasks.js",
+    "clean": "npm run task clean",
+    "build": "npm run task build",
+    "pack": "npm run task pack",
+    "packtgz": "npm run task packtgz",
+
     "upx": "npm run upx:win && npm run upx:linux",
     "upx:win": "npm run upx:win32 && npm run upx:win64",
     "upx:linux": "npm run upx:linux32 && npm run upx:linux64",
@@ -55,14 +48,6 @@
     "upx:win64": "upx $npm_package_config_dirbuild/$npm_package_name-win32-x64/$npm_package_name.exe",
     "upx:linux32": "upx $npm_package_config_dirbuild/$npm_package_name-linux-ia32/$npm_package_name",
     "upx:linux64": "upx $npm_package_config_dirbuild/$npm_package_name-linux-x64/$npm_package_name",
-    "upx:osx": "echo 'Sorry, UPX is not supported for Mac OS X builds right now.'",
-    "pack": "npm run pack:osx && npm run pack:win",
-    "pack:win": "npm run pack:win32 && npm run pack:win64",
-    "pack:osx": "electron-builder \"$npm_package_config_dirbuild/$npm_package_name-darwin-x64/$npm_package_name.app\" --platform=osx --out=\"$npm_package_config_dirdist\" --config=packager.json",
-    "pack:win32": "electron-builder \"$npm_package_config_dirbuild/$npm_package_name-win32-ia32\" --platform=win --out=\"$npm_package_config_dirdist\" --config=packager.json",
-    "pack:win322": "echo electron-builder \"$npm_package_config_dirbuild/$npm_package_name-win32-ia32\" --platform=win --out=\"$npm_package_config_dirdist\" --config=packager.json",
-    "pack:win64": "electron-builder \"$npm_package_config_dirbuild/$npm_package_name-win32-x64\" --platform=win --out=\"$npm_package_config_dirdist\" --config=packager.json",
-    "pack:linux32": "targz c \"$npm_package_config_dirbuild/$npm_package_name-linux-ia32\" \"$npm_package_config_dirdist/$npm_package_name-linux-ia32.tar.gz\"",
-    "pack:linux64": "targz c \"$npm_package_config_dirbuild/$npm_package_name-linux-x64\" \"$npm_package_config_dirdist/$npm_package_name-linux-x64.tar.gz\""
+    "upx:osx": "echo 'Sorry, UPX is not supported for Mac OS X builds right now.'"
   }
 }
