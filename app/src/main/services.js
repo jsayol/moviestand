@@ -30,6 +30,7 @@ moviesServices.factory('MoviesView', ['SettingsFactory',
 
     if (SettingsFactory.get('view', 'maximized')) {
       obj.win.maximize()
+      obj.isMaximized = true
     }
     else {
       var savedWinSize = SettingsFactory.get('view', 'size')
@@ -43,6 +44,9 @@ moviesServices.factory('MoviesView', ['SettingsFactory',
         obj.win.setPosition(savedWinPos[0], savedWinPos[1])
       }
     }
+
+    // Show the window (we created it hidden)
+    obj.win.show()
 
     obj.toggleFullscreen = function() {
       return obj.win.setFullScreen(!obj.win.isFullScreen())

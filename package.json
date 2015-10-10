@@ -13,7 +13,7 @@
     "lodash": "^3.1.0",
     "lowdb": "^0.7.2",
     "moviedb": "^0.2.0",
-    "electron-prebuilt": "^0.30.4"
+    "electron-prebuilt": "^0.32.1"
   },
   "devDependencies": {
     "electron-builder": "^2.0.0",

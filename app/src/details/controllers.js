@@ -128,6 +128,11 @@ moviesControllers.controller('MovieDetailCtrl', ['$scope', '$stateParams', 'DBFa
     $scope.open = function() {
       $scope.view.shell.showItemInFolder($scope.movie.path)
     }
+    
+    $scope.toggleWatched = function() {
+	$scope.movie.watched = !!!$scope.movie.watched
+	CollectionsFactory.save()
+    }
   }
 ])
 

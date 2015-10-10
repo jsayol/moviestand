@@ -31,14 +31,13 @@ app.on('ready', function() {
     "height": 625,
     "min-width": 600,
     "min-height": 400,
-    "center": true
+    "center": true,
+    "show": false
   })
 
   // and load the index.html of the app.
   mainWindow.loadUrl('file://' + __dirname + '/index.html')
-
-  // Open the devtools.
-  // mainWindow.openDevTools()
+  mainWindow.hide()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {

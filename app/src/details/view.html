@@ -23,7 +23,7 @@
         <div class="controls">
 
           <div class="btn-group">
-            <button type="button" class="btn btn-primary btn-sm" ng-click="play(true)">
+            <button type="button" class="btn btn-primary btn-sm" ng-click="play()">
               <span class="glyphicon glyphicon-play"> Play</span>
             </button>
             <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -31,14 +31,14 @@
               <span class="sr-only">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu" role="menu">
-              <li><a href="" ng-click="play(true)">Internally</a></li>
               <li><a href="" ng-click="play()">Default player</a></li>
+              <li><a href="" ng-click="play(true)">Internally</a></li>
             </ul>
           </div>
 
           <div ng-if="movieInfo.trailers.youtube.length > 0" class="btn-group">
             <button type="button" class="btn btn-primary btn-sm" ng-click="watchtrailer()">
-              <span aria-hidden="true" class="glyphicon glyphicon-film"> Watch trailer</span>
+              <span aria-hidden="true" class="glyphicon glyphicon-film"> Trailer</span>
             </button>
             <button ng-if="movieInfo.trailers.youtube.length > 1" type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
               <span class="caret"></span>
@@ -51,8 +51,12 @@
             </ul>
           </div>
 
-          <button type="button" class="btn btn-primary btn-sm" ng-click="open()">
-            <span aria-hidden="true" class="glyphicon glyphicon-folder-open"> Show folder</span>
+          <button type="button" class="btn btn-primary btn-sm" ng-click="open()" title="Open folder for this file">
+            <span aria-hidden="true" class="glyphicon glyphicon-folder-open"> Folder</span>
+          </button>
+
+          <button type="button" class="btn btn-sm" ng-class="{'btn-default': !movie.watched, 'btn-primary': movie.watched}" ng-click="toggleWatched()" title="Mark as watched">
+            <span aria-hidden="true" class="glyphicon glyphicon-eye-open"></span>
           </button>
 
         </div>
